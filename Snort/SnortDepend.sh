@@ -1,4 +1,7 @@
 #
+# Snort Dependency Installation
+#  Version 2
+#
 echo 'Snort dependency installation ...'
 # Variables:
 daq_ver=daq-2.0.6
@@ -11,12 +14,12 @@ cd ~/sourcecode/snort_src/
 # To download and install the dependencies required to compile code, run the following commands
 #
 pkg_not_exists=$(dpkg-query -W bison | grep 'no packages')
-if [ $? == 0 ]; then
+if [ $? != 0 ]; then
   echo 'Installing bison'
   sudo apt-get install bison -y
 fi
 pkg_not_exists=$(dpkg-query -W flex | grep 'no packages')
-if [ $? == 0 ]; then
+if [ $? != 0 ]; then
   echo 'Installing flex'
   sudo apt-get install flex -y
 fi
@@ -24,17 +27,17 @@ fi
 # There are also three software packages that you may already have.  However, you likely don�t have the required header files, so you will have to also download and install these.  The package manager will make this a trivially easy task.  Run the following commands
 #
 pkg_not_exists=$(dpkg-query -W libpcap-dev | grep 'no packages')
-if [ $? == 0 ]; then
+if [ $? != 0 ]; then
   echo 'Installing libpcap-dev'
   sudo apt-get install libpcap-dev -y
 fi
 pkg_not_exists=$(dpkg-query -W libpcre3-dev | grep 'no packages')
-if [ $? == 0 ]; then
+if [ $? != 0 ]; then
   echo 'Installing libpcre3-dev'
   sudo apt-get install libpcre3-dev -y
 fi
 pkg_not_exists=$(dpkg-query -W libdumbnet-dev | grep 'no packages')
-if [ $? == 0 ]; then
+if [ $? != 0 ]; then
   echo 'Installing libdumbnet-dev'
   sudo apt-get install libdumbnet-dev -y
 fi
