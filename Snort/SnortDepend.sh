@@ -1,6 +1,6 @@
 #
 # Snort Dependency Installation
-#  Version 3
+#  Version 4
 #
 echo '=- Snort dependency installation -='
 # Variables:
@@ -16,14 +16,14 @@ cd ~/sourcecode/snort_src/
 # To download and install the dependencies required to compile code, run the following commands
 #
 pkg_not_exists=$(dpkg-query -W bison | grep 'no packages')
-if [ $? != 0 ]; then
+if [ $? != 1 ]; then
   echo '=- Installing bison -='
   sudo apt-get install bison -y
 else
   echo '=- Skipping bison -='
 fi
 pkg_not_exists=$(dpkg-query -W flex | grep 'no packages')
-if [ $? != 0 ]; then
+if [ $? != 1 ]; then
   echo '=- Installing flex -='
   sudo apt-get install flex -y
 else
@@ -33,25 +33,33 @@ fi
 # There are also three software packages that you may already have.  However, you likely don�t have the required header files, so you will have to also download and install these.  The package manager will make this a trivially easy task.  Run the following commands
 #
 pkg_not_exists=$(dpkg-query -W libpcap-dev | grep 'no packages')
-if [ $? != 0 ]; then
+if [ $? != 1 ]; then
   echo '=- Installing libpcap-dev -='
   sudo apt-get install libpcap-dev -y
 else
   echo '=- Skipping libpcap-dev -='
 fi
 pkg_not_exists=$(dpkg-query -W libpcre3-dev | grep 'no packages')
-if [ $? != 0 ]; then
+if [ $? != 1 ]; then
   echo '=- Installing libpcre3-dev -='
   sudo apt-get install libpcre3-dev -y
 else
   echo '=- Skipping libpcre3-dev -='
 fi
 pkg_not_exists=$(dpkg-query -W libdumbnet-dev | grep 'no packages')
-if [ $? != 0 ]; then
+if [ $? != 1 ]; then
   echo '=- Installing libdumbnet-dev -='
   sudo apt-get install libdumbnet-dev -y
 else
   echo '=- Skipping libdumbnet-dev -='
+fi
+#
+pkg_not_exists=$(dpkg-query -W checkinstall | grep 'no packages')
+if [ $? != 1 ]; then
+  echo '=- Installing checkinstall -='
+  sudo apt-get install checkinstall
+else
+  echo '=- Skipping checkinstall -='
 fi
 #
 # New requirement for DAQ ...
@@ -101,14 +109,6 @@ pkg-config --list-all | grep -i openssl
 # Nice, all of our dependencies should now be in order to compile the DAQ.  Usually, you will run the standard ./configure; make; sudo make install; to compile and install source code.   This will definitely work, but I think it is better practice to make everything into an easily manageable package.  The package �checkinstall� will do this automatically.  We will first need to get it from our package manager.
 # Run the following command
 #
-pkg_not_exists=$(dpkg-query -W checkinstall | grep 'no packages')
-if [ $? == 0 ]; then
-  echo '=- Installing checkinstall -='
-  sudo apt-get install checkinstall
-else
-  echo '=- Skipping checkinstall -='
-fi
-#
 cd ~/sourcecode/snort_src/
 if [ -f ${daq_ver}.tar.gz ]; then
   rm ${daq_ver}.tar.gz
@@ -134,10 +134,10 @@ sudo checkinstall -D --install=no --fstrans=no
 # Checkinstall will ask you some questions about the package to create.  Use the defaults.  Give the description something like �snort-daq� and hit enter again.  Keep all default settings.
 # You will notice that if you list the directory contents, there will be a a file with .deb extension.  This is the package that checkinstall generated.  The name of this file can vary, so don�t copy the following command verbatim.  Install it using the following command.  If you are unsure, list the contents of the directory.
 #
-echo 'Installing ${daq_ver}'
+echo '=- Installing ${daq_ver} -='
 sudo dpkg -i ${daq_ver}${arm_pkg}.deb
 #
 # The DAQ is now installed and we can get back to installing Snort.
 #
-echo 'End of Snort dependency installation ...'
+echo '=- End of Snort dependency installation -='
 #
