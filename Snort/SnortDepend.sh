@@ -1,12 +1,13 @@
 #
 # Snort Dependency Installation
-#  Version 5
+#  Version 6
 #
 echo "=- Snort dependency installation -="
 # Variables:
 luajit_ver=LuaJIT-2.0.5
 openssl_ver=openssl-1.1.1
 daq_ver=daq-2.0.6
+daq_file=daq-${daq_ver}
 arm_pkg="-1_armhf"
 #
 mkdir -p ~/sourcecode/snort_src/
@@ -116,20 +117,21 @@ pkg-config --list-all | grep -i openssl
 # Run the following command
 #
 cd ~/sourcecode/snort_src/
-if [ -f ${daq_ver}.tar.gz ]; then
-  rm ${daq_ver}.tar.gz
+if [ -f ${daq_file}.tar.gz ]; then
+  rm ${daq_file}.tar.gz
+  rm -r ${daq_file}
 fi
-echo "get ${daq_ver}"
-wget https://snort.org/downloads/snort/${daq_ver}.tar.gz
+echo "get ${daq_file}"
+wget https://snort.org/downloads/snort/${daq_file}.tar.gz
 #
 # Since this is a compressed tar file, we will need to extract it using the following command
 #
-echo "tar ${daq_ver}"
-tar xvfz ${daq_ver}.tar.gz
+echo "tar ${daq_file}"
+tar xvfz ${daq_file}.tar.gz
 #
 # We will now move into the directory we just extracted to begin running scripts to install the software.
 #
-cd ${daq_ver}/
+cd ${daq_file}/
 #
 # We can now get to compiling and installing our code.  Run the following commands
 #
@@ -140,8 +142,8 @@ sudo checkinstall -D --install=no --fstrans=no
 # Checkinstall will ask you some questions about the package to create.  Use the defaults.  Give the description something like �snort-daq� and hit enter again.  Keep all default settings.
 # You will notice that if you list the directory contents, there will be a a file with .deb extension.  This is the package that checkinstall generated.  The name of this file can vary, so don�t copy the following command verbatim.  Install it using the following command.  If you are unsure, list the contents of the directory.
 #
-echo "=- Installing ${daq_ver} -="
-sudo dpkg -i ${daq_ver}${arm_pkg}.deb
+echo "=- Installing daq_${daq_ver} -="
+sudo dpkg -i daq_${daq_ver}${arm_pkg}.deb
 #
 # The DAQ is now installed and we can get back to installing Snort.
 #
