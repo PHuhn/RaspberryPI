@@ -1,6 +1,7 @@
 #
 # Snort Dependency Installation
-#  Version 7
+#  Written by: Phil Huhn
+#  Version 8
 #
 echo "=- Snort dependency installation -="
 # Variables:
@@ -119,7 +120,7 @@ pkg-config --list-all | grep -i openssl
 cd ~/sourcecode/snort_src/
 if [ -f ${daq_file}.tar.gz ]; then
   rm ${daq_file}.tar.gz
-  rm -r ${daq_file}
+  rm -rf ${daq_file}
 fi
 echo "get ${daq_file}"
 wget https://snort.org/downloads/snort/${daq_file}.tar.gz
