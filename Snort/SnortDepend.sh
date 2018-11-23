@@ -1,9 +1,11 @@
 #
 # Snort Dependency Installation
-#  Version 2
+#  Version 3
 #
-echo 'Snort dependency installation ...'
+echo '=- Snort dependency installation -='
 # Variables:
+luajit_ver=LuaJIT-2.0.5
+openssl_ver=openssl-1.1.1
 daq_ver=daq-2.0.6
 arm_pkg='-1_armhf'
 #
@@ -15,39 +17,49 @@ cd ~/sourcecode/snort_src/
 #
 pkg_not_exists=$(dpkg-query -W bison | grep 'no packages')
 if [ $? != 0 ]; then
-  echo 'Installing bison'
+  echo '=- Installing bison -='
   sudo apt-get install bison -y
+else
+  echo '=- Skipping bison -='
 fi
 pkg_not_exists=$(dpkg-query -W flex | grep 'no packages')
 if [ $? != 0 ]; then
-  echo 'Installing flex'
+  echo '=- Installing flex -='
   sudo apt-get install flex -y
+else
+  echo '=- Skipping flex -='
 fi
 #
 # There are also three software packages that you may already have.  However, you likely don�t have the required header files, so you will have to also download and install these.  The package manager will make this a trivially easy task.  Run the following commands
 #
 pkg_not_exists=$(dpkg-query -W libpcap-dev | grep 'no packages')
 if [ $? != 0 ]; then
-  echo 'Installing libpcap-dev'
+  echo '=- Installing libpcap-dev -='
   sudo apt-get install libpcap-dev -y
+else
+  echo '=- Skipping libpcap-dev -='
 fi
 pkg_not_exists=$(dpkg-query -W libpcre3-dev | grep 'no packages')
 if [ $? != 0 ]; then
-  echo 'Installing libpcre3-dev'
+  echo '=- Installing libpcre3-dev -='
   sudo apt-get install libpcre3-dev -y
+else
+  echo '=- Skipping libpcre3-dev -='
 fi
 pkg_not_exists=$(dpkg-query -W libdumbnet-dev | grep 'no packages')
 if [ $? != 0 ]; then
-  echo 'Installing libdumbnet-dev'
+  echo '=- Installing libdumbnet-dev -='
   sudo apt-get install libdumbnet-dev -y
+else
+  echo '=- Skipping libdumbnet-dev -='
 fi
 #
 # New requirement for DAQ ...
 pkg_not_exists=$(pkg-config --list-all | grep -i luajit)
 if [ $? != 0 ]; then
-  luajit_ver=LuaJIT-2.0.5
   #
-  echo 'Installing LuaJIT package'
+  echo '=- Installing LuaJIT package -='
+  echo 'Package: ${luajit_ver}'
   #
   cd ~/sourcecode/snort_src/
   wget http://luajit.org/download/${luajit_ver}.tar.gz
@@ -59,15 +71,17 @@ if [ $? != 0 ]; then
   ./config
   make && sudo make install
   #
+else
+  echo '=- Skipping LuaJIT package -='
 fi
 pkg-config --list-all | grep -i luajit
 #
 # New requirement for DAQ ...
 pkg_not_exists=$(pkg-config --list-all | grep -i ^openssl)
 if [ $? != 0 ]; then
-  openssl_ver=openssl-1.1.1
   #
-  echo 'Installing openssl package'
+  echo '=- Installing openssl package -='
+  echo 'Package: ${openssl_ver}'
   cd ~/sourcecode/snort_src/
   #
   wget https://www.openssl.org/source/${openssl_ver}.tar.gz
@@ -78,6 +92,8 @@ if [ $? != 0 ]; then
   #
   ./config
   make && sudo make install
+else
+  echo '=- Skipping openssl -='
 fi
 #
 pkg-config --list-all | grep -i openssl
@@ -87,8 +103,10 @@ pkg-config --list-all | grep -i openssl
 #
 pkg_not_exists=$(dpkg-query -W checkinstall | grep 'no packages')
 if [ $? == 0 ]; then
-  echo 'Installing checkinstall'
+  echo '=- Installing checkinstall -='
   sudo apt-get install checkinstall
+else
+  echo '=- Skipping checkinstall -='
 fi
 #
 cd ~/sourcecode/snort_src/
@@ -100,7 +118,7 @@ wget https://snort.org/downloads/snort/${daq_ver}.tar.gz
 #
 # Since this is a compressed tar file, we will need to extract it using the following command
 #
-echo 'get ${daq_ver}'
+echo 'tar ${daq_ver}'
 tar xvfz ${daq_ver}.tar.gz
 #
 # We will now move into the directory we just extracted to begin running scripts to install the software.
