@@ -1,12 +1,12 @@
 #
 # Snort Dependency Installation
-#  Version 6
+#  Version 7
 #
 echo "=- Snort dependency installation -="
 # Variables:
 luajit_ver=LuaJIT-2.0.5
 openssl_ver=openssl-1.1.1
-daq_ver=daq-2.0.6
+daq_ver=2.0.6
 daq_file=daq-${daq_ver}
 arm_pkg="-1_armhf"
 #
