@@ -18,7 +18,7 @@ if [ -f ${snort_file}.tar.gz ]; then
   rm ${snort_file}.tar.gz
   rm -rf ${snort_file}
 fi
-echo "get ${snort_file}"
+echo "=- get ${snort_file} -="
 wget https://snort.org/downloads/snort/${snort_file}.tar.gz
 tar xvfz ${snort_file}.tar.gz
 #
@@ -28,8 +28,11 @@ cd ~/sourcecode/snort_src/${snort_file}
 #
 # Once inside the source directory, we can now begin the compile and install process.  Run the following commands
 
+echo "=- ./configure -="
 ./configure --enable-sourcefire
+echo "=- make -="
 make
+echo "=- checkinstall -="
 sudo checkinstall -D --install=no --fstrans=no
 #
 # Checkinstall will ask you some questions about the package to create.  Make the description something like 'snort' and hit enter again.  Follow the prompts and use the defaults.  As we are not distributing the package, you will not have to worry about dependency identification.  Checkinstall will be useful should you choose to remove Snort and the DAQ at a later time

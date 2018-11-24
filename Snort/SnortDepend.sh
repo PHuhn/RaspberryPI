@@ -1,7 +1,7 @@
 #
 # Snort Dependency Installation
 #  Written by: Phil Huhn
-#  Version 8
+#  Version 9
 #
 echo "=- Snort dependency installation -="
 # Variables:
@@ -14,7 +14,7 @@ arm_pkg="-1_armhf"
 mkdir -p ~/sourcecode/snort_src/
 cd ~/sourcecode/snort_src/
 #
-# If we try to compile this source code at this moment, it will fail because there are missing dependencies.  You can try running ./configure and piecing together the required  dependencies, or use the following commands to easily install them.  Luckily, Raspian�s package manager contains all of the required packages making this an easy task. 
+# If we try to compile this source code at this moment, it will fail because there are missing dependencies.  You can try running ./configure and piecing together the required  dependencies, or use the following commands to easily install them.  Luckily, Raspian's package manager contains all of the required packages making this an easy task. 
 # To download and install the dependencies required to compile code, run the following commands
 #
 pkg_not_exists=$(dpkg-query -W bison)
@@ -34,7 +34,7 @@ else
   dpkg-query -W flex
 fi
 #
-# There are also three software packages that you may already have.  However, you likely don�t have the required header files, so you will have to also download and install these.  The package manager will make this a trivially easy task.  Run the following commands
+# There are also three software packages that you may already have.  However, you likely don't have the required header files, so you will have to also download and install these.  The package manager will make this a trivially easy task.  Run the following commands
 #
 pkg_not_exists=$(dpkg-query -W libpcap-dev)
 if [ $? != 0 ]; then
@@ -114,7 +114,7 @@ fi
 #
 pkg-config --list-all | grep -i openssl
 #
-# Nice, all of our dependencies should now be in order to compile the DAQ.  Usually, you will run the standard ./configure; make; sudo make install; to compile and install source code.   This will definitely work, but I think it is better practice to make everything into an easily manageable package.  The package �checkinstall� will do this automatically.  We will first need to get it from our package manager.
+# Nice, all of our dependencies should now be in order to compile the DAQ.  Usually, you will run the standard ./configure; make; sudo make install; to compile and install source code.   This will definitely work, but I think it is better practice to make everything into an easily manageable package.  The package 'checkinstall' will do this automatically.  We will first need to get it from our package manager.
 # Run the following command
 #
 cd ~/sourcecode/snort_src/
@@ -140,8 +140,8 @@ cd ${daq_file}/
 make
 sudo checkinstall -D --install=no --fstrans=no
 #
-# Checkinstall will ask you some questions about the package to create.  Use the defaults.  Give the description something like �snort-daq� and hit enter again.  Keep all default settings.
-# You will notice that if you list the directory contents, there will be a a file with .deb extension.  This is the package that checkinstall generated.  The name of this file can vary, so don�t copy the following command verbatim.  Install it using the following command.  If you are unsure, list the contents of the directory.
+# Checkinstall will ask you some questions about the package to create.  Use the defaults.  Give the description something like 'snort-daq' and hit enter again.  Keep all default settings.
+# You will notice that if you list the directory contents, there will be a a file with .deb extension.  This is the package that checkinstall generated.  The name of this file can vary, so don't copy the following command verbatim.  Install it using the following command.  If you are unsure, list the contents of the directory.
 #
 echo "=- Installing daq_${daq_ver} -="
 sudo dpkg -i daq_${daq_ver}${arm_pkg}.deb
