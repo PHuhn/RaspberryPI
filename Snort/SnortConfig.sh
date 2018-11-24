@@ -28,16 +28,21 @@ if [ ! -d "/etc/snort" ]; then
   sudo mkdir -p /etc/snort
 fi
 cd ~/sourcecode/snort_src/
-rules_file=$(find -name 'snortrules-snapshot*.gz' | sort | tail -1)
+rules_file=$(find -name "snortrules-snapshot*.gz" | sort | tail -1)
 if [ $? == 0 ]; then
-  echo 'Processing ${rules_file} rules file.'
-  tar xvfz ${rules_file}.tar.gz -C snortrules
-  cd snortrules
-  echo 'Moving ${rules_file} rules.'
-  sudo mv * /etc/snort
+  if [ $rules_file ]; then
+    echo "Processing ${rules_file} rules file."
+    mkdir -p snortrules
+    tar -xvzf ${rules_file} -C snortrules
+    if [ -d snortrules/etc ]; then
+      cd snortrules
+      echo "Moving ${rules_file} rules."
+      sudo mv * /etc/snort
+    fi
+  fi
   #
 else
-  echo 'snortrules-snapshot g-zip not found'
+  echo "snortrules-snapshot g-zip not found"
 fi
 #
 # We will now create the directories that will hold the configuration files
@@ -66,13 +71,13 @@ fi
 wget https://snort.org/downloads/community/${community_file}.tar.gz
 if [ -f ${community_file}.tar.gz ]; then
   tar xvfz ${community_file}.tar.gz
-  echo 'Community rules: ${community_file}, over-writing local.rules'
-  echo '# ---------------' >  comm.rules
-  echo '# Community Rules' >> comm.rules
-  echo '# ---------------' >> comm.rules
+  echo "Community rules: ${community_file}, over-writing local.rules"
+  echo "# ---------------" >  comm.rules
+  echo "# Community Rules" >> comm.rules
+  echo "# ---------------" >> comm.rules
   # Grab commented out rules and then only the IIS server and SQL Injection ones.
   #  Then uncomment them and convert $EXTERNAL_NET to any.
-  grep '^#' ${community_file}/community.rules | grep -E 'SQL inj|SERVER-IIS' | sed -e "s/^# //" -e "s/ \$EXTERNAL_NET / any /" >> comm.rules
+  grep "^#" ${community_file}/community.rules | grep -E "SQL inj|SERVER-IIS" | sed -e "s/^# //" -e "s/ \$EXTERNAL_NET / any /" >> comm.rules
   sudo cp comm.rules /etc/snort/rules/local.rules
   #
 fi
