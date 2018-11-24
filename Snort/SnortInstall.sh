@@ -1,14 +1,15 @@
 #
 # Installing Snort
 #  Written by: Phil Huhn
-#  Version 1
+#  Version 2
 #
 echo "=- Snort installation -="
 # Varialbes:
-snort_file=snort-2.9.12
+snort_ver=2.9.12
+snort_file=snort-${snort_ver}
 arm_pkg='-1_armhf'
 #
-# Let�s move back to the directory where we have been downloading our source code
+# Let's move back to the directory where we have been downloading our source code
 
 cd ~/sourcecode/snort_src/
 #
@@ -31,11 +32,27 @@ cd ~/sourcecode/snort_src/${snort_file}
 make
 sudo checkinstall -D --install=no --fstrans=no
 #
-# Checkinstall will ask you some questions about the package to create.  Make the description something like �snort� and hit enter again.  Follow the prompts and use the defaults.  As we are not distributing the package, you will not have to worry about dependency identification.  Checkinstall will be useful should you choose to remove Snort and the DAQ at a later time
-# You will notice that if you list the directory contents, there will be a a file with .deb extension.  This is the package that checkinstall generated.  The name of this file can vary, so don�t follow the previous command verbatim.  Install it using the following command
+# Checkinstall will ask you some questions about the package to create.  Make the description something like 'snort' and hit enter again.  Follow the prompts and use the defaults.  As we are not distributing the package, you will not have to worry about dependency identification.  Checkinstall will be useful should you choose to remove Snort and the DAQ at a later time
+# You will notice that if you list the directory contents, there will be a a file with .deb extension.  This is the package that checkinstall generated.  The name of this file can vary, so don't follow the previous command verbatim.  Install it using the following command
 
-sudo dpkg -i ${snort_file}${arm_pkg}.deb
+sudo dpkg -i snort_${snort_ver}${arm_pkg}.deb
 #
-# It is also necessary to update the shared library cache.  Run the following command:
+# Let's move back to the directory where we have been downloading our source code
+
+sudo ldconfig
+#
+# Run the following command to verify that Snort has been installed in the proper usr/local/bin/ location
+
+which snort
+#
+# Snort will run from the usr/local/bin location.  We also want to add a symlink in /usr/sbin that points to /usr/local/bin/snort.  The purpose of this is when we later add the snort user and group, the system process will be able to locate the Snort binary.
+
+sudo ln -s /usr/local/bin/snort /usr/sbin/snort
+#
+# We can finally check to see if Snort works by verifying the version
+
+snort --version
+
+#
 echo "=- End of Snort installation -="
 #
