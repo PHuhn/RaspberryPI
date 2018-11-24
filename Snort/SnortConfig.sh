@@ -1,7 +1,7 @@
 #
 # Configuring Snort
 #  Written by: Phil Huhn
-#  Version 1
+#  Version 3
 #
 echo "=- Snort configuration -="
 # Varialbes:
@@ -38,6 +38,8 @@ if [ $? == 0 ]; then
       cd snortrules
       echo "Moving ${rules_file} rules."
       sudo mv * /etc/snort
+    else
+      echo "snortrules etc directory not found"
     fi
   fi
   #
