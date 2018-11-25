@@ -2,8 +2,11 @@
 ## Overview
 This repository contains one project as follows:
 - snort - three bash scripts for installing and configuring snort.
+  1. SnortDepend.sh
+  1. SnortInstall.sh
+  1. SnortConfig.sh
 
-### Snort
+### Snort Installation and Configuration
 
 #### SnortDepend.sh
 install snort dependenies of 
@@ -23,14 +26,21 @@ $ ./SnortInstall.sh
 ```
 
 #### SnortConfig.sh
-snort configuration
-- create /etc/snort
-- load rules snapshot
-- download and load some community rules to local.rules
-- copy stuff to snort directory
-- set permissions and owner
-- edit (sed) snort.conf file
+snort configuration as follows:
+- create snort directory (/etc/snort),
+- load rules snapshot,
+- download, edit (sed) and load some community rules to local.rules,
+- copy stuff to snort directory,
+- set permissions and owner,
+- edit (sed) snort.conf file,
+- test configuration.
 
+to get snapshot to the PI:
+```
+> pscp snortrules-snapshot-2990.tar.gz pi@192.168.0.10:./sourcecode/snort_src/.
+```
+
+to run the configuration script:
 ```
 $ wget https://raw.githubusercontent.com/PHuhn/RaspberryPI/master/Snort/SnortConfig.sh
 $ chmod 755 SnortConfig.sh
