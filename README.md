@@ -2,9 +2,9 @@
 ## Overview
 This repository contains one project as follows:
 - snort - three bash scripts for installing and configuring snort.
-  1) SnortDepend.sh
-  1) SnortInstall.sh
-  1) SnortConfig.sh
+  1. SnortDepend.sh
+  2. SnortInstall.sh
+  3. SnortConfig.sh
 
 ### Snort Installation and Configuration
 
