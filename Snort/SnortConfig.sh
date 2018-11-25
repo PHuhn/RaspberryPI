@@ -1,11 +1,12 @@
 #
 # Configuring Snort
 #  Written by: Phil Huhn
-#  Version 3
+#  Version 4
 #
 echo "=- Snort configuration -="
 # Varialbes:
 snort_file=snort-2.9.12
+community_file=community-rules
 #
 
 cd ~/sourcecode/snort_src/
