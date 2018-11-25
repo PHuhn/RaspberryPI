@@ -1,5 +1,6 @@
 #
 # Installing Snort
+#  Derived from https://blog.holdenkilbride.com/index.php/tag/snort/
 #  Written by: Phil Huhn
 #  Version 2
 #

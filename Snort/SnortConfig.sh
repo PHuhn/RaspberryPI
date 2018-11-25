@@ -1,7 +1,8 @@
 #
 # Configuring Snort
+#  Derived from https://blog.holdenkilbride.com/index.php/tag/snort/
 #  Written by: Phil Huhn
-#  Version 4
+#  Version 5
 #
 echo "=- Snort configuration -="
 # Varialbes:
@@ -133,7 +134,7 @@ echo "=- sed snort.conf -="
 # leave include uncommented, will load from rules snapshot
 # Change the HOME_NET and EXTERNAL_NET, and root directory to /etc/snort
 sudo sed -i -e "s/^ipvar HOME_NET any/ipvar HOME_NET 192\.168\.0\.0\/24/" \
-	-e "s/^ipvar EXTERNAL_NET any/ipvar EXTERNAL_NET !$HOME_NET/" \
+	-e "s/^ipvar EXTERNAL_NET any/ipvar EXTERNAL_NET !\$HOME_NET/" \
 	-e "s/ \.\.\// \/etc\/snort\//" /etc/snort/snort.conf
 #
 # We will now run Snort with the configuration validation flag to test all of our settings.  Hopefully it will state that everything validated successfully
