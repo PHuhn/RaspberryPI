@@ -5,6 +5,7 @@
 #  Version 5
 #
 echo "=- Snort configuration -="
+date
 # Varialbes:
 snort_file=snort-2.9.12
 community_file=community-rules
@@ -146,5 +147,6 @@ sudo snort -T -c /etc/snort/snort.conf -i eth0
 #	sudo snort -A console -u snort -g snort -c /etc/snort/snort.conf -l /var/log/snort -i eth0
 # The following flags imply: -A means output to console -u means run as the snort user -g means run as snort group -c means run the following config file -l means log to the following directory, -i means detect traffic on the following ethernet interface
 # -Holden Kilbride
+date
 echo "=- End of Snort configuration -="
 #

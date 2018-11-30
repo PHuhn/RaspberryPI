@@ -5,6 +5,7 @@
 #  Version 2
 #
 echo "=- Snort installation -="
+date
 # Varialbes:
 snort_ver=2.9.12
 snort_file=snort-${snort_ver}
@@ -58,5 +59,6 @@ sudo ln -s /usr/local/bin/snort /usr/sbin/snort
 snort --version
 
 #
+date
 echo "=- End of Snort installation -="
 #

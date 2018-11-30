@@ -5,6 +5,7 @@
 #  Version 9
 #
 echo "=- Snort dependency installation -="
+date
 # Variables:
 luajit_ver=LuaJIT-2.0.5
 openssl_ver=openssl-1.1.1
@@ -149,5 +150,6 @@ sudo dpkg -i daq_${daq_ver}${arm_pkg}.deb
 #
 # The DAQ is now installed and we can get back to installing Snort.
 #
+date
 echo "=- End of Snort dependency installation -="
 #
