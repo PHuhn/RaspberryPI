@@ -1,26 +1,42 @@
+#!/bin/bash
 #
 # Snort Dependency Installation
 #  Derived from https://blog.holdenkilbride.com/index.php/tag/snort/
 #  Written by: Phil Huhn
-#  Version 9
+#  Version 10
 #
 echo "=- Snort dependency installation -="
 date
 # Variables:
-luajit_ver=LuaJIT-2.0.5
-openssl_ver=openssl-1.1.1
-daq_ver=2.0.6
-daq_file=daq-${daq_ver}
-arm_pkg="-1_armhf"
+LUAJIT_VER=2.0.5
+OPENSSL_VER=1.1.1
+DAQ_VER=2.0.6
 #
-mkdir -p ~/sourcecode/snort_src/
+while getopts luajit_ver:openssl_ver:daq_ver: option
+do
+  case "${option}"
+  in
+    luajit_ver) LUAJIT_VER=${OPTARG};;
+    openssl_ver) OPENSSL_VER=${OPTARG};;
+    daq_ver) DAQ_VER=${OPTARG};;
+  esac
+done
+#
+LUAJIT_FILE=LuaJIT-${LUAJIT_VER}
+OPENSSL_FILE=openssl-${OPENSSL_VER}
+DAQ_FILE=daq-${DAQ_VER}
+ARM_PKG="-1_armhf"
+#
+if [ ! -d "~/sourcecode/snort_src/" ]; then
+  mkdir -p ~/sourcecode/snort_src/
+fi
 cd ~/sourcecode/snort_src/
 #
 # If we try to compile this source code at this moment, it will fail because there are missing dependencies.  You can try running ./configure and piecing together the required  dependencies, or use the following commands to easily install them.  Luckily, Raspian's package manager contains all of the required packages making this an easy task. 
 # To download and install the dependencies required to compile code, run the following commands
 #
 pkg_not_exists=$(dpkg-query -W bison)
-if [ $? != 0 ]; then
+if [ $? != 0 || "${pkg_not_exists}" == "bison" ]; then
   echo "=- Installing bison -="
   sudo apt-get install bison -y
 else
@@ -28,7 +44,7 @@ else
   dpkg-query -W bison
 fi
 pkg_not_exists=$(dpkg-query -W flex)
-if [ $? != 0 ]; then
+if [ $? != 0 || "${pkg_not_exists}" == "flex" ]; then
   echo "=- Installing flex -="
   sudo apt-get install flex -y
 else
@@ -47,7 +63,7 @@ else
   dpkg-query -W libpcap-dev
 fi
 pkg_not_exists=$(dpkg-query -W libpcre3-dev)
-if [ $? != 0 ]; then
+if [ $? != 0 || "${pkg_not_exists}" == "libpcre3-dev" ]; then
   echo "=- Installing libpcre3-dev -="
   sudo apt-get install libpcre3-dev -y
 else
@@ -77,14 +93,14 @@ pkg_not_exists=$(pkg-config --list-all | grep -i luajit)
 if [ $? != 0 ]; then
   #
   echo "=- Installing LuaJIT package -="
-  echo "Package: ${luajit_ver}"
+  echo "Package: ${LUAJIT_FILE}"
   #
   cd ~/sourcecode/snort_src/
-  wget http://luajit.org/download/${luajit_ver}.tar.gz
-  tar zxf ${luajit_ver}.tar.gz
+  wget http://luajit.org/download/${LUAJIT_FILE}.tar.gz
+  tar zxf ${LUAJIT_FILE}.tar.gz
   #
   # change into extracted directory
-  cd ${luajit_ver}
+  cd ${LUAJIT_FILE}
   #
   ./config
   make && sudo make install
@@ -99,14 +115,14 @@ pkg_not_exists=$(pkg-config --list-all | grep -i ^openssl)
 if [ $? != 0 ]; then
   #
   echo "=- Installing openssl package -="
-  echo "Package: ${openssl_ver}"
+  echo "Package: ${OPENSSL_FILE}"
   cd ~/sourcecode/snort_src/
   #
-  wget https://www.openssl.org/source/${openssl_ver}.tar.gz
-  tar zxf ${openssl_ver}.tar.gz
+  wget https://www.openssl.org/source/${OPENSSL_FILE}.tar.gz
+  tar zxf ${OPENSSL_FILE}.tar.gz
   #
   # change into extracted directory
-  cd ${openssl_ver}
+  cd ${OPENSSL_FILE}
   #
   ./config
   make && sudo make install
@@ -120,21 +136,21 @@ pkg-config --list-all | grep -i openssl
 # Run the following command
 #
 cd ~/sourcecode/snort_src/
-if [ -f ${daq_file}.tar.gz ]; then
-  rm ${daq_file}.tar.gz
-  rm -rf ${daq_file}
+if [ -f ${DAQ_FILE}.tar.gz ]; then
+  rm ${DAQ_FILE}.tar.gz
+  rm -rf ${DAQ_FILE}
 fi
-echo "get ${daq_file}"
-wget https://snort.org/downloads/snort/${daq_file}.tar.gz
+echo "get ${DAQ_FILE}"
+wget https://snort.org/downloads/snort/${DAQ_FILE}.tar.gz
 #
 # Since this is a compressed tar file, we will need to extract it using the following command
 #
-echo "tar ${daq_file}"
-tar xvfz ${daq_file}.tar.gz
+echo "tar ${DAQ_FILE}"
+tar xvfz ${DAQ_FILE}.tar.gz
 #
 # We will now move into the directory we just extracted to begin running scripts to install the software.
 #
-cd ${daq_file}/
+cd ${DAQ_FILE}/
 #
 # We can now get to compiling and installing our code.  Run the following commands
 #
@@ -145,8 +161,8 @@ sudo checkinstall -D --install=no --fstrans=no
 # Checkinstall will ask you some questions about the package to create.  Use the defaults.  Give the description something like 'snort-daq' and hit enter again.  Keep all default settings.
 # You will notice that if you list the directory contents, there will be a a file with .deb extension.  This is the package that checkinstall generated.  The name of this file can vary, so don't copy the following command verbatim.  Install it using the following command.  If you are unsure, list the contents of the directory.
 #
-echo "=- Installing daq_${daq_ver} -="
-sudo dpkg -i daq_${daq_ver}${arm_pkg}.deb
+echo "=- Installing daq_${DAQ_VER} -="
+sudo dpkg -i daq_${DAQ_VER}${ARM_PKG}.deb
 #
 # The DAQ is now installed and we can get back to installing Snort.
 #

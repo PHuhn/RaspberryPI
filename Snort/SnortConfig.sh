@@ -1,14 +1,24 @@
+#!/bin/bash
 #
 # Configuring Snort
 #  Derived from https://blog.holdenkilbride.com/index.php/tag/snort/
 #  Written by: Phil Huhn
-#  Version 5
+#  Version 6
 #
 echo "=- Snort configuration -="
 date
 # Varialbes:
-snort_file=snort-2.9.12
-community_file=community-rules
+SNORT_VER=2.9.12
+#
+while getopts snort_ver: option
+do
+  case "${option}"
+  in
+    snort_ver) SNORT_VER=${OPTARG};;
+  esac
+done
+SNORT_FILE=snort-${SNORT_VER}
+COMMUNITY_FILE=community-rules
 #
 
 cd ~/sourcecode/snort_src/
@@ -69,20 +79,20 @@ fi
 # Just download the community rules, load into local.rules
 #
 cd ~/sourcecode/snort_src/
-if [ -f ${community_file}.tar.gz ]; then
-  rm ${community_file}.tar.gz
+if [ -f ${COMMUNITY_FILE}.tar.gz ]; then
+  rm ${COMMUNITY_FILE}.tar.gz
 fi
 #
-wget https://snort.org/downloads/community/${community_file}.tar.gz
-if [ -f ${community_file}.tar.gz ]; then
-  tar xvfz ${community_file}.tar.gz
-  echo "Community rules: ${community_file}, over-writing local.rules"
+wget https://snort.org/downloads/community/${COMMUNITY_FILE}.tar.gz
+if [ -f ${COMMUNITY_FILE}.tar.gz ]; then
+  tar xvfz ${COMMUNITY_FILE}.tar.gz
+  echo "Community rules: ${COMMUNITY_FILE}, over-writing local.rules"
   echo "# ---------------" >  comm.rules
   echo "# Community Rules" >> comm.rules
   echo "# ---------------" >> comm.rules
   # Grab commented out rules and then only the IIS server and SQL Injection ones.
   #  Then uncomment them and convert $EXTERNAL_NET to any.
-  grep "^#" ${community_file}/community.rules | grep -E "SQL inj|SERVER-IIS" | sed -e "s/^# //" -e "s/ \$EXTERNAL_NET / any /" >> comm.rules
+  grep "^#" ${COMMUNITY_FILE}/community.rules | grep -E "SQL inj|SERVER-IIS" | sed -e "s/^# //" -e "s/ \$EXTERNAL_NET / any /" >> comm.rules
   sudo cp comm.rules /etc/snort/rules/local.rules
   #
 fi
@@ -112,7 +122,7 @@ sudo chown -R snort:snort /usr/local/lib/snort_dynamicrules
 #
 # We are getting close to having a working IDS on our Raspberry Pi.  All that is left is some configuration.  Luckily, we don't have to build the configuration from scratch.  The tar file that contained the source code also contains various config files for running Snort.  All we have to do is move these to the /etc/snort/ directory.  Change the working directory to the /etc/ directory in the extracted Snort tar
 
-cd ~/sourcecode/snort_src/${snort_file}/etc
+cd ~/sourcecode/snort_src/${SNORT_FILE}/etc
 #
 # We only want to copy configuration related to Snort.  This excludes any of the makefile(s)
 
@@ -123,7 +133,7 @@ sudo cp *.map /etc/snort
 #
 # We will not be utilizing preprocessor rules in this tutorial.  It would still be a good idea to bring them in however, should you choose to implement them at a later time.  I will explore this topic in future tutorials.
 
-cd ~/sourcecode/snort_src/${snort_file}/src/dynamic-preprocessors/build/usr/local/lib/snort_dynamicpreprocessor
+cd ~/sourcecode/snort_src/${SNORT_FILE}/src/dynamic-preprocessors/build/usr/local/lib/snort_dynamicpreprocessor
 sudo cp * /usr/local/lib/snort_dynamicpreprocessor
 #
 # Configuring and Running Snort

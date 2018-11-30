@@ -1,32 +1,42 @@
+#!/bin/bash
 #
 # Installing Snort
 #  Derived from https://blog.holdenkilbride.com/index.php/tag/snort/
 #  Written by: Phil Huhn
-#  Version 2
+#  Version 3
 #
 echo "=- Snort installation -="
 date
 # Varialbes:
-snort_ver=2.9.12
-snort_file=snort-${snort_ver}
-arm_pkg='-1_armhf'
+SNORT_VER=2.9.12
+#
+while getopts snort_ver: option
+do
+  case "${option}"
+  in
+    snort_ver) SNORT_VER=${OPTARG};;
+  esac
+done
+#
+SNORT_FILE=snort-${SNORT_VER}
+ARM_PKG='-1_armhf'
 #
 # Let's move back to the directory where we have been downloading our source code
 
 cd ~/sourcecode/snort_src/
 #
 # We now need to obtain the tar file of source code for Snort and decompress the file.  If you recall from earlier, go to snort.org to find this download.  Run the following commands to download and extract the tar file
-if [ -f ${snort_file}.tar.gz ]; then
-  rm ${snort_file}.tar.gz
-  rm -rf ${snort_file}
+if [ -f ${SNORT_FILE}.tar.gz ]; then
+  rm ${SNORT_FILE}.tar.gz
+  rm -rf ${SNORT_FILE}
 fi
-echo "=- get ${snort_file} -="
-wget https://snort.org/downloads/snort/${snort_file}.tar.gz
-tar xvfz ${snort_file}.tar.gz
+echo "=- get ${SNORT_FILE} -="
+wget https://snort.org/downloads/snort/${SNORT_FILE}.tar.gz
+tar xvfz ${SNORT_FILE}.tar.gz
 #
 # Installing Snort follows a similar process to compiling and installing the DAQ.  Lets move into the extracted directory. 
 
-cd ~/sourcecode/snort_src/${snort_file}
+cd ~/sourcecode/snort_src/${SNORT_FILE}
 #
 # Once inside the source directory, we can now begin the compile and install process.  Run the following commands
 
@@ -40,7 +50,7 @@ sudo checkinstall -D --install=no --fstrans=no
 # Checkinstall will ask you some questions about the package to create.  Make the description something like 'snort' and hit enter again.  Follow the prompts and use the defaults.  As we are not distributing the package, you will not have to worry about dependency identification.  Checkinstall will be useful should you choose to remove Snort and the DAQ at a later time
 # You will notice that if you list the directory contents, there will be a a file with .deb extension.  This is the package that checkinstall generated.  The name of this file can vary, so don't follow the previous command verbatim.  Install it using the following command
 
-sudo dpkg -i snort_${snort_ver}${arm_pkg}.deb
+sudo dpkg -i snort_${SNORT_VER}${ARM_PKG}.deb
 #
 # Let's move back to the directory where we have been downloading our source code
 
