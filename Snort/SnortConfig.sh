@@ -3,26 +3,57 @@
 # Configuring Snort
 #  Derived from https://blog.holdenkilbride.com/index.php/tag/snort/
 #  Written by: Phil Huhn
-#  Version 6
+#  Version 7
 #
 echo "=- Snort configuration -="
 date
 # Varialbes:
 SNORT_VER=2.9.12
+RULE_VER=""
+OINK_CODE=""
 #
-while getopts snort_ver: option
+if [ "$1" == "-h" ]; then
+  cat <<EOF
+  Usage: $0 [options]
+
+  -h    this help text.
+  -s    snort version, example 2.9.12
+  -r    rules version, example 2990
+        required for downloading snapshot rules
+  -o    oink code, example 7b11111111111111111111111111111111111015
+        required for downloading snapshot rules
+
+EOF
+  exit
+fi
+#
+while getopts ":s:r:o:" option
 do
+  echo "Option: ${option}  arg: ${OPTARG}"
   case "${option}"
   in
-    snort_ver) SNORT_VER=${OPTARG};;
+    s) SNORT_VER=${OPTARG};;
+    r)  RULE_VER=${OPTARG};;
+    o) OINK_CODE=${OPTARG};;
   esac
 done
 SNORT_FILE=snort-${SNORT_VER}
 COMMUNITY_FILE=community-rules
 #
-
+echo $0 SNORT_VER=${SNORT_VER} RULE_VER=${RULE_VER} OINK_CODE=${OINK_CODE}
+#
+if [ ! -d "~/sourcecode/snort_src/" ]; then
+  mkdir -p ~/sourcecode/snort_src/
+fi
+#
 cd ~/sourcecode/snort_src/
-
+#
+if [ "${RULE_VER}" != "" ] && [ "${OINK_CODE}" != "" ]; then
+  #
+  echo "=- getting snortrules-snapshot-${RULE_VER}.tar.gz -="
+  wget https://www.snort.org/reg-rules/snortrules-snapshot-${RULE_VER}.tar.gz/${OINK_CODE} -O snortrules-snapshot-${RULE_VER}.tar.gz
+  #
+fi
 #
 # If you see something like this, you have done the previous steps correctly.
 # Snort is now mostly installed.  There are two problems now.  

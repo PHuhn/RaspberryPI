@@ -3,18 +3,29 @@
 # Installing Snort
 #  Derived from https://blog.holdenkilbride.com/index.php/tag/snort/
 #  Written by: Phil Huhn
-#  Version 3
+#  Version 4
 #
 echo "=- Snort installation -="
 date
 # Varialbes:
 SNORT_VER=2.9.12
 #
-while getopts snort_ver: option
+if [ "$1" == "-h" ]; then
+  cat <<EOF
+  Usage: $0 [options]
+
+  -h    this help text.
+  -s    snort version, example 2.9.12
+
+EOF
+  exit
+fi
+#
+while getopts "s:" option
 do
   case "${option}"
   in
-    snort_ver) SNORT_VER=${OPTARG};;
+    s) SNORT_VER=${OPTARG};;
   esac
 done
 #
