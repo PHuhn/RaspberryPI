@@ -3,7 +3,7 @@
 # Snort Dependency Installation
 #  Derived from https://blog.holdenkilbride.com/index.php/tag/snort/
 #  Written by: Phil Huhn
-#  Version 10
+#  Version 11
 #
 echo "=- Snort dependency installation -="
 date
@@ -36,7 +36,7 @@ cd ~/sourcecode/snort_src/
 # To download and install the dependencies required to compile code, run the following commands
 #
 pkg_not_exists=$(dpkg-query -W bison)
-if [ $? != 0 || "${pkg_not_exists}" == "bison" ]; then
+if [ $? != 0 ] || [ $(echo ${pkg_not_exists} | tr -d "\t") == "bison" ]; then
   echo "=- Installing bison -="
   sudo apt-get install bison -y
 else
@@ -44,7 +44,7 @@ else
   dpkg-query -W bison
 fi
 pkg_not_exists=$(dpkg-query -W flex)
-if [ $? != 0 || "${pkg_not_exists}" == "flex" ]; then
+if [ $? != 0 ] || [ $(echo ${pkg_not_exists} | tr -d "\t") == "flex" ]; then
   echo "=- Installing flex -="
   sudo apt-get install flex -y
 else
@@ -63,7 +63,7 @@ else
   dpkg-query -W libpcap-dev
 fi
 pkg_not_exists=$(dpkg-query -W libpcre3-dev)
-if [ $? != 0 || "${pkg_not_exists}" == "libpcre3-dev" ]; then
+if [ $? != 0 ] || [ $(echo ${pkg_not_exists} | tr -d "\t") == "libpcre3-dev" ]; then
   echo "=- Installing libpcre3-dev -="
   sudo apt-get install libpcre3-dev -y
 else
