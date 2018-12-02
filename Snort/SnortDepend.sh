@@ -3,10 +3,8 @@
 # Snort Dependency Installation
 #  Derived from https://blog.holdenkilbride.com/index.php/tag/snort/
 #  Written by: Phil Huhn
-#  Version 12
+#  Version 13
 #
-echo "=- Snort dependency installation -="
-date
 # Variables:
 LUAJIT_VER=2.0.5
 OPENSSL_VER=1.1.1
@@ -17,13 +15,16 @@ if [ "$1" == "-h" ]; then
   Usage: $0 [options]
 
   -h    this help text.
-  -l    LuaJIT version, example 2.0.5
-  -o    OpenSSL version, example 1.1.1
-  -d    DAQ version, example 2.0.6
+  -l    LuaJIT version, default example ${LUAJIT_VER}
+  -o    OpenSSL version, default example ${OPENSSL_VER}
+  -d    DAQ version, default example ${DAQ_VER}
 
 EOF
   exit
 fi
+#
+echo "=- Snort dependency installation -="
+date
 #
 while getopts ":l:o:d:" option
 do

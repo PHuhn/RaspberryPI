@@ -3,10 +3,8 @@
 # Installing Snort
 #  Derived from https://blog.holdenkilbride.com/index.php/tag/snort/
 #  Written by: Phil Huhn
-#  Version 4
+#  Version 5
 #
-echo "=- Snort installation -="
-date
 # Varialbes:
 SNORT_VER=2.9.12
 #
@@ -15,11 +13,14 @@ if [ "$1" == "-h" ]; then
   Usage: $0 [options]
 
   -h    this help text.
-  -s    snort version, example 2.9.12
+  -s    snort version, default example ${SNORT_VER}
 
 EOF
   exit
 fi
+#
+echo "=- Snort installation -="
+date
 #
 while getopts "s:" option
 do
