@@ -73,6 +73,6 @@ $ ./SnortConfig.sh -h
 $ ./SnortConfig.sh
 ```
 
-The config script will accept a secure copy snapshot rule, passing no rules version and oink code, or the script can get the snapshot rules by passing both snopshort rule version and oink code.
+The config script will accept a secure copy snapshot rule, passing no rules version and oink code, or the script can get the snapshot rules by passing both snapshot rule version and oink code.
 
 Good luck, Phil
