@@ -6,6 +6,8 @@ This repository contains one project as follows:
   2. SnortInstall.sh
   3. SnortConfig.sh
 
+At the time of creation, these scripts were designed be executed without any paramenters.  I tried to make the scripts, also work as versions change, so I allowed passing parameters.  Even from Oct to Nov of 2018, things changed that caused me to have to change these scripts.
+
 ### Snort Installation and Configuration
 
 #### SnortDepend.sh
@@ -14,6 +16,14 @@ bison, flex, libpcap-dev, libpcre3-dev, libdumbnet-dev, Checkinstall, LauJIT, Op
 ```
 $ wget https://raw.githubusercontent.com/PHuhn/RaspberryPI/master/Snort/SnortDepend.sh
 $ chmod 755 SnortDepend.sh
+$ ./SnortDepend.sh -h
+  Usage: ./SnortDepend.sh [options]
+
+  -h    this help text.
+  -l    LuaJIT version, default example 2.0.5
+  -o    OpenSSL version, default example 1.1.1
+  -d    DAQ version, default example 2.0.6
+
 $ ./SnortDepend.sh
 ```
 
@@ -22,6 +32,12 @@ download, compile and install snort
 ```
 $ wget https://raw.githubusercontent.com/PHuhn/RaspberryPI/master/Snort/SnortInstall.sh
 $ chmod 755 SnortInstall.sh
+$ ./SnortInstall.sh -h
+  Usage: ./SnortInstall.sh [options]
+
+  -h    this help text.
+  -s    snort version, default example 2.9.12
+
 $ ./SnortInstall.sh
 ```
 
@@ -44,7 +60,19 @@ to run the configuration script:
 ```
 $ wget https://raw.githubusercontent.com/PHuhn/RaspberryPI/master/Snort/SnortConfig.sh
 $ chmod 755 SnortConfig.sh
+$ ./SnortConfig.sh -h
+  Usage: ./SnortConfig.sh [options]
+
+  -h    this help text.
+  -s    snort version, default example 2.9.12
+  -r    rules version, example 2990
+        required for downloading snapshot rules
+  -o    oink code, example 7b11111111111111111111111111111111111015
+        required for downloading snapshot rules
+
 $ ./SnortConfig.sh
 ```
+
+The config script will accept a secure copy snapshot rule, passing no rules version and oink code, or the script can get the snapshot rules by passing both snopshort rule version and oink code.
 
 Good luck, Phil
