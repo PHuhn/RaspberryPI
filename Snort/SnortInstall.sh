@@ -3,7 +3,7 @@
 # Installing Snort
 #  Derived from https://blog.holdenkilbride.com/index.php/tag/snort/
 #  Written by: Phil Huhn
-#  Version 5
+#  Version 6
 #
 # Varialbes:
 SNORT_VER=2.9.12
@@ -64,7 +64,7 @@ sudo checkinstall -D --install=no --fstrans=no
 
 sudo dpkg -i snort_${SNORT_VER}${ARM_PKG}.deb
 #
-# Let's move back to the directory where we have been downloading our source code
+# It is also necessary to update the shared library cache.  Run the following command:
 
 sudo ldconfig
 #
