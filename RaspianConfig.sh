@@ -2,25 +2,13 @@
 #
 # Miniumum configuration Raspberry PI running raspian
 #  Written by: Phil Huhn
-#  Version 1
+#  Version 2
 #
 # Varialbes:
 COUNTRY=US
 TIMEZONE="michigan"
 #
-read -d '' HELP <<-"_EOF_"
-  Usage: $0 [options]
-
-  -h    this help text.
-  -c    country code,  default value: ${COUNTRY}
-  -t    timezone code, default value: ${TIMEZONE}
-
-  Example:  $0 -c canada -t eastern
-
-_EOF_
-
 if [ "$1" == "-h" ]; then
-  echo $HELP
   cat <<EOF
   Usage: $0 [options]
 

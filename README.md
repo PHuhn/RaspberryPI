@@ -1,12 +1,40 @@
 # Raspberry PI
 ## Overview
-This repository contains one project as follows:
+
+This repository contains scripts to configure Raspian and Snort project as follows:
+- Raspain - one bash scripts for installing and configuring.
+  1. RaspianConfig.sh
+
 - snort - three bash scripts for installing and configuring snort.
   1. SnortDepend.sh
   2. SnortInstall.sh
   3. SnortConfig.sh
 
 At the time of creation, these scripts were designed be executed without any paramenters.  I tried to make the scripts, also work as versions change, so I allowed passing parameters.  Even from Oct to Nov of 2018, things changed that caused me to have to change these scripts.
+
+### Raspian Configuration
+
+#### RaspianConfig.sh
+Configuration as follows:
+- set timezone
+- set keyboard locale
+- update the Raspian O/S
+- change password
+
+```
+$ wget https://raw.githubusercontent.com/PHuhn/RaspberryPI/master/RaspianConfig.sh
+$ chmod 755 RaspianConfig.sh
+$ ./RaspianConfig.sh -h
+  Usage: ./RaspianConfig.sh [options]
+
+  -h    this help text.
+  -c    country code,  default value: US
+  -t    timezone code, default value: michigan
+
+  Example:  ./RaspianConfig.sh -c canada -t eastern
+
+$ ./RaspianConfig.sh
+```
 
 ### Snort Installation and Configuration
 
