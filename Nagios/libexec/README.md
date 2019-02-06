@@ -5,6 +5,11 @@ This folder contains scripts to perform Nagios checks as follows:
 1. check_state_statusjson.sh
 
 ### check_state_statusjson.sh
+
+NRDP (Nagios Remote Data Processor) and NSCA (Nagios Service Check Acceptor) addons allow Nagios to integrate passive alerts and checks from remote machines and applications.
+
+This check_state_statusjson.sh script is meant as a replacement for check_dummy script in a passive service that has **check_freshness** is enabled.
+
 #### Installation
 Installation example as follows:
 
@@ -81,6 +86,6 @@ define service {
     freshness_threshold     300
 }
 ```
-One should change the **service_description**, **host_name**, **servicegroups** and **check_command** values approprately per your configuration.  The **check_freshness** and **freshness_threshold** values cause the **check_command** script/command to be called.  This script is meant as a replacement for check_dummy script.
+One should change the **service_description**, **host_name**, **servicegroups** and **check_command** values approprately per your configuration.  The **check_freshness** and **freshness_threshold** values cause the **check_command** script/command to be called.
 
 Good luck, Phil
