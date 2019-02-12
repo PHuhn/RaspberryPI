@@ -3,14 +3,14 @@
 # ----------------------------------------------------------------------------
 # Install Nagios NRDP on a Raspberry PI running raspian
 #  Written by: Phil Huhn
-#  Version 3
+#  Version 4
 #
 # NRDP - Installing NRDP From Source
 # https://support.nagios.com/kb/article/nrdp-installing-nrdp-from-source-602.html#Raspbian
 #
 # program values:
 PROGNAME=$(basename "$0")
-REVISION="1.0.3"
+REVISION="1.0.4"
 # Varialbes:
 NRDP_VER=1.5.2
 #
@@ -64,7 +64,7 @@ if [ -d "/usr/local/src/nrdp-${NRDP_VER}" ]; then
         systemctl restart apache2.service
         # these are farely random values, but % bad for DOS and $ bad for UNIX
         wget -O token.txt https://api.wordpress.org/secret-key/1.1/salt/
-        sed -E -e "s/define\(.................../   /" -e "s/([$%\])/=/g" -e "s/'/\"/g" -e "s/..$/,/" -i token.txt
+        sed -E -e "s/define\(.................../   /" -e "s/([$%\`\])/=/g" -e "s/'/\"/g" -e "s/..$/,/" -i token.txt
         echo ""
         echo "=- * suggested tokens for config.inc.php * -="
         cat token.txt
