@@ -3,15 +3,14 @@
 # ----------------------------------------------------------------------------
 # Install Nagios NRDP on a Raspberry PI running raspian
 #  Written by: Phil Huhn
-#  Version 1
+#  Version 3
 #
-# How to Install NRDP Addon on Nagios Core
-# https://www.techbrown.com/install-nrdp-addon-nagios-core/
-# https://github.com/NagiosEnterprises/nrdp
+# NRDP - Installing NRDP From Source
+# https://support.nagios.com/kb/article/nrdp-installing-nrdp-from-source-602.html#Raspbian
 #
 # program values:
 PROGNAME=$(basename "$0")
-REVISION="1.0.2"
+REVISION="1.0.3"
 # Varialbes:
 NRDP_VER=1.5.2
 #
@@ -71,7 +70,7 @@ if [ -d "/usr/local/src/nrdp-${NRDP_VER}" ]; then
         cat token.txt
         #
         echo "Edit /usr/local/nrdp/server/config.inc.php and cut & paste above suggested tokens..."
-        echo "also edit /etc/httpd/conf.d/nrdp.conf to verify desired configuration."
+        echo "also edit /etc/apache2/sites-enabled/nrdp.conf to verify desired configuration."
         #
         rm /usr/local/src/nrdp-${NRDP_VER}.tar.gz
     else
