@@ -1,8 +1,9 @@
 #!/bin/bash
 #
+# ----------------------------------------------------------------------------
 # Miniumum configuration Raspberry PI running raspian
 #  Written by: Phil Huhn
-#  Version 2
+#  Version 3
 #
 # Varialbes:
 COUNTRY=US
@@ -34,6 +35,10 @@ do
     t) TIMEZONE=${OPTARG};;
   esac
 done
+#
+echo "=- Change password -="
+echo "  ^d to beark out of passwd..."
+passwd
 #
 COUNTRY_L=$(echo "${COUNTRY}" | tr '[:upper:]' '[:lower:]')
 COUNTRY_U=$(echo "${COUNTRY}" | tr '[:lower:]' '[:upper:]')
@@ -77,17 +82,14 @@ if [ ! -e /etc/localtime ] ; then
 fi
 #
 echo "=- Set keyboard locale -="
-# sudo sed -i -e "s/^XKBLAYOUT=\"gb\"/XKBLAYOUT=\"${COUNTRY_L}\"/" /etc/default/keyboard
-sudo dpkg-reconfigure keyboard-configuration
-sudo service keyboard-setup restart
+sudo sed -i -e "s/^XKBLAYOUT=\"gb\"/XKBLAYOUT=\"${COUNTRY_L}\"/" /etc/default/keyboard
+# sudo dpkg-reconfigure keyboard-configuration
+# sudo service keyboard-setup restart
 grep "XKBLAYOUT" /etc/default/keyboard
 #
 echo "=- Update the Raspian O/S -="
-sudo apt-get update && sudo apt-get dist-upgrade –y
-#
-echo "=- Change password -="
-echo "  ^d to beark out of passwd..."
-passwd
+sudo apt-get update
+sudo apt-get dist-upgrade
 #
 date
 echo "=- End of Configure Raspberry PI -="
