@@ -30,7 +30,18 @@ $
 
 ### NagiosNrdpInstall.sh
 
+Installation of Nagios NRDP passive plugin.  Allow one to restfully send passive events to Nagios.  See
+
+http://&lt;nagios server address&gt;/nrdp/
+
+Also see the /usr/local/nrdp/clients folder for utilities for sending passive events:
+
+* send_nrdp.php
+* send_nrdp.py
+* send_nrdp.sh
+
 #### Installation
+
 Installation example as follows:
 
 ```
@@ -56,15 +67,34 @@ $ sudo ./NagiosNrdpInstall.sh
     "FyYJ6P(3RB{>F@Q}2l-_}ozz~*U2vPQ[Fa3{HA6Jlw)TqAt~K|;I2~+o(e-mgv+n",
     "7lG7nIs5Y:()5lyAOf+Y|710+e*+KzBurDAJ?<S)N+5)v-cHa!,: hu<bdchFSB>",
     ")3,gU-0&7+6:V^>OX|!I6a|-IdD-[Uq<GW]rfd<GTN0:x/,K+7-^A.DJQVK)Pe7l",
-Edit /usr/local/nrdp/server/config.inc.php and cut & paste above suggested tokens...
+/usr/local/nrdp/server/config.inc.php should now contain the above suggested tokens...
+You can remove them, or add additional tokens.
 also edit /etc/apache2/sites-enabled/nrdp.conf to verify desired configuration.
-Tue 12 Feb 09:06:21 EST 2019
+Thu 14 Feb 07:59:08 EST 2019
 =- End of install of NRDP on Raspberry PI -=
 $ sudo vi /usr/local/nrdp/server/config.inc.php
 ```
 
-* Need to edit **/usr/local/nrdp/server/config.inc.php** file and define security tokens.  Suggested values are supplied. 
-* Additionally, should edit **/etc/apache2/sites-enabled/nrdp.conf** to verify desired configuration.
+Some other things still need to be completed.  The following two file should be reviewed and edited (use your faviorite editor 'vi', 'nano', ...):
 
+* /usr/local/nrdp/server/config.inc.php
+* /etc/apache2/sites-enabled/nrdp.conf
+
+##### config.inc.php
+
+The following are the fake tokens in the NRDP configuration file (around line 12):
+```
+// NOTE: Tokens are just alphanumeric strings - make them hard to guess!
+$cfg['authorized_tokens'] = array(
+    //"mysecrettoken",  // <-- not a good token
+    //"90dfs7jwn3",   // <-- a better token (don't use this exact one, make your own)
+);
+```
+
+I replaced them with 8 random tokens, from wordpress salt creation.  I replaced all $, % and `, so the token can be eaily used on a DOS or UNIX command line.
+
+##### nrdp.conf
+
+Additionally, should edit **nrdp.conf** to verify desired configuration.
 
 Good luck, Phil
