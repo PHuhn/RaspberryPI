@@ -7,6 +7,12 @@ This folder contains scripts to perform Nagios installations as follows:
 
 ### NagiosInstall.sh
 
+Nagios monitors availability, uptime and response time of every configured node on the network.  Nagios monitors the network for problems caused by overloaded data links or network connections, as well as monitoring routers, switches and more.  See installed web site:
+
+http://&lt;nagios server address&gt;/nagios/
+
+Also see the /usr/local/nagios/etc/ folder for configuration of active network nodes.
+
 #### Installation
 Installation example as follows:
 
@@ -30,7 +36,7 @@ $
 
 ### NagiosNrdpInstall.sh
 
-Installation of Nagios NRDP passive plugin.  Allow one to restfully send passive events to Nagios.  See
+Installation of Nagios NRDP passive plugin.  Allow one to restfully send passive events to Nagios.  See installed web site:
 
 http://&lt;nagios server address&gt;/nrdp/
 
@@ -59,18 +65,18 @@ $ sudo ./NagiosNrdpInstall.sh
 =- Running NagiosNrdpInstall.sh 1.0.2 -=
     ...
 =- * suggested tokens for config.inc.php * -=
-    "8gN:hyTs7p`0P}i&6[.i~x-! me!j8e^nySlTWSR DkU{;-}+TY_fy-t=Ih7M+do",
-    "5y|fEwd{oo]7/R_!cxm?h`r8Z/-|hJmx}Z=au>O>Q]1Xiw,kIA]vT!^hx-w{ZArE",
-    "1O#&.VU-!)&K~Cv+T48/=F9#dX-+<B6E|_m;0R:w#`9-v7zh1CmU-`1.uNCZ4s!K",
-    " -3AB=.9X7Rzfyh<F5zAY,Ty=l *ZQSSH#CJh_~&g3((_,{8d-_2q.GX+G*bECJm",
-    "hc#a6F9TQEq6du/h=EG.^_L};-4M>!&d=jMK 4kfGM^*JU`=51@a=c*FSQxKR-!J",
-    "FyYJ6P(3RB{>F@Q}2l-_}ozz~*U2vPQ[Fa3{HA6Jlw)TqAt~K|;I2~+o(e-mgv+n",
-    "7lG7nIs5Y:()5lyAOf+Y|710+e*+KzBurDAJ?<S)N+5)v-cHa!,: hu<bdchFSB>",
-    ")3,gU-0&7+6:V^>OX|!I6a|-IdD-[Uq<GW]rfd<GTN0:x/,K+7-^A.DJQVK)Pe7l",
+    "OyfMCh8SJvMtjbuhMnN99-HqMMfGWPH1IA1hMmi9kmdP2SLYOpvAAsnFxTServ8sXzSfzmUI08IBP1oHTPNANA",
+    "bwDdGLFmw0nkEkWO2zHpkifOqM0L3BquqIqdZqdVNqFO3qsqTpbrTfIKVOtb02TvEvDd7NAjI8KHDtVimaU9Lw",
+    "1ObVCv9HW3smeYFisxA-VdSWHZ9PN8AUNGxBsK0i3-oc3P7DAdlOh4TxOkLYn6hXf9IiyrZKdg5jXwfp7fZaiQ",
+    "I2zgZjpUNkErVgQ2gpLj0vZGRJSJPBHOIs2K729yxPAQ__ZybMnT-iPbsBKC6GHygu-JVfqMgiOaYo0r5osSaw",
+    "7PVgnBjkPMS5G1U8YINKknqzejjwWDsMyWxrpCB2qPFf7MDXheOTsapqifcBIn3vTHJhI4PeVrK-IK53ZisWjA",
+    "zLkZovjeqblWabvhmL3uHAG1NVfD1zVDoe3_rjW0LR4u6NHY-l94mXkgQt6-qaQEkIzOvBuBU2Z0f2qANlg-SQ",
+    "YIBq0JdR0yyItX-jwlTJCozlbIOKK6Ks3xmXpWZw7s2-OgNHJnr6kVwoUUtMBLynDsglPzwMo-pbPjgPT-67fw",
+    "Jf6vR5KnEinno-8nrhRV77kyf2SapcbTuUFOA4A69LJjE3TlsL4tK3GPzGvoE05R1xU7T0L43kSTBc9Jm5DYMw",
 /usr/local/nrdp/server/config.inc.php should now contain the above suggested tokens...
 You can remove them, or add additional tokens.
 also edit /etc/apache2/sites-enabled/nrdp.conf to verify desired configuration.
-Thu 14 Feb 07:59:08 EST 2019
+Sat 16 Feb 15:27:01 EST 2019
 =- End of install of NRDP on Raspberry PI -=
 $ sudo vi /usr/local/nrdp/server/config.inc.php
 ```

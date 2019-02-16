@@ -63,12 +63,22 @@ if [ -d "${SRC_DIR}/nrdp-${NRDP_VER}" ]; then
     chown -R nagios:nagios ${NRDP_DIR}
     cp nrdp.conf /etc/apache2/sites-enabled/.
     systemctl restart apache2.service
-    # these are farely random values, but % bad for DOS and $ bad for UNIX
-    wget -O token.txt https://api.wordpress.org/secret-key/1.1/salt/
-    sed -E -e "s/define\(.................../   /" -e "s/([$%\`\])/=/g" -e "s/'/\"/g" -e "s/..$/,/" -i token.txt
+    # generate 8 random 64 byte tokens with python secrets
+    which python3.7
+    if [ $? == 0 ]; then
+      python3.7 << _EOF >> token.txt
+import secrets as Secrets
+for i in range(0, 8):
+    print('    "{0}",'.format(Secrets.token_urlsafe(64)))
+_EOF
+    else
+      # these are farely random values, but % bad for DOS, $ bad for UNIX, ! (history) causes 'event not found'
+      wget -O token.txt https://api.wordpress.org/secret-key/1.1/salt/
+      sed -E -e "s/define\(.................../   /" -e "s/([$%\`\!\])/=/g" -e "s/'/\"/g" -e "s/..$/,/" -i token.txt
+    fi
     # edit the nrdp config file by finding the 2 fake tokens and delete them,
     # then read in the token.txt at that point, write and quit
-    ed ${NRDP_DIR}/server/config.inc.php <<'EOF'
+    ed ${NRDP_DIR}/server/config.inc.php <<EOF
 /mysecrettoken/
 .,+1d
 .-1r token.txt
