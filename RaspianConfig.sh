@@ -80,6 +80,27 @@ if [ ! -e /etc/localtime ] ; then
   echo sudo ln -sf /usr/share/zoneinfo/{COUNTRY}/{TIMEZONE} /etc/localtime
   ls /usr/share/zoneinfo/
 fi
+# Configure bluetooth serial connection
+BT_DIR=/usr/local/bluetooth
+if [ ! -d "${BT_DIR}" ]; then
+  sudo mkdir ${BT_DIR}
+fi
+if [ ! -f ${BT_DIR}/btserial.sh ]; then
+  cd ${BT_DIR}
+  sudo wget https://raw.githubusercontent.com/PHuhn/RaspberryPI/master/btserial.sh
+  sudo chmod 755 ./btserial.sh
+  # now edit /etc/rc.local
+  sudo ed /etc/rc.local <<EOF
+$
+.-1i
+
+# Launch bluetooth service startup script /home/pi/btserial.sh
+sudo /usr/local/bluetooth/btserial.sh &
+.
+w
+q
+EOF
+fi
 #
 echo "=- Set keyboard locale -="
 sudo sed -i -e "s/^XKBLAYOUT=\"gb\"/XKBLAYOUT=\"${COUNTRY_L}\"/" /etc/default/keyboard

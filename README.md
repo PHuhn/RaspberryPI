@@ -4,6 +4,7 @@
 This repository contains scripts to configure Raspian and Snort project as follows:
 - Raspain - one bash scripts for installing and configuring.
   1. RaspianConfig.sh
+  2. Python3_7.sh
 
 - snort - three bash scripts for installing and configuring snort.
   1. SnortDepend.sh
@@ -16,10 +17,11 @@ At the time of creation, these scripts were designed be executed without any par
 
 #### RaspianConfig.sh
 Configuration as follows:
+- change password
 - set timezone
+- configure bluetooth serial connection
 - set keyboard locale
 - update the Raspian O/S
-- change password
 
 ```
 $ wget https://raw.githubusercontent.com/PHuhn/RaspberryPI/master/RaspianConfig.sh
@@ -34,6 +36,16 @@ $ ./RaspianConfig.sh -h
   Example:  ./RaspianConfig.sh -c canada -t eastern
 
 $ ./RaspianConfig.sh
+```
+
+### Python 3.7 Installation
+
+#### Python3_7.sh
+
+```
+$ wget https://raw.githubusercontent.com/PHuhn/RaspberryPI/master/Python3_7.sh
+$ chmod 755 Python3_7.sh
+$ ./Python3_7.sh
 ```
 
 ### Snort Installation and Configuration
