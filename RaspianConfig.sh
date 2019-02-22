@@ -3,7 +3,7 @@
 # ----------------------------------------------------------------------------
 # Miniumum configuration Raspberry PI running raspian
 #  Written by: Phil Huhn
-#  Version 3
+#  Version 4
 #
 # Varialbes:
 COUNTRY=US
@@ -37,7 +37,7 @@ do
 done
 #
 echo "=- Change password -="
-echo "  ^d to beark out of passwd..."
+echo "  ^d to break out of passwd..."
 passwd
 #
 COUNTRY_L=$(echo "${COUNTRY}" | tr '[:upper:]' '[:lower:]')
@@ -80,15 +80,19 @@ if [ ! -e /etc/localtime ] ; then
   echo sudo ln -sf /usr/share/zoneinfo/{COUNTRY}/{TIMEZONE} /etc/localtime
   ls /usr/share/zoneinfo/
 fi
+#
 # Configure bluetooth serial connection
+#
 BT_DIR=/usr/local/bluetooth
 if [ ! -d "${BT_DIR}" ]; then
+  echo "=- Created ${BT_DIR} directory -="
   sudo mkdir ${BT_DIR}
 fi
 if [ ! -f ${BT_DIR}/btserial.sh ]; then
   cd ${BT_DIR}
   sudo wget https://raw.githubusercontent.com/PHuhn/RaspberryPI/master/btserial.sh
   sudo chmod 755 ./btserial.sh
+  echo "=- Created ${BT_DIR}/btserial.sh file -="
   # now edit /etc/rc.local
   sudo ed /etc/rc.local <<EOF
 $
@@ -100,13 +104,18 @@ sudo /usr/local/bluetooth/btserial.sh &
 w
 q
 EOF
+  echo "=- Added ${BT_DIR}/btserial.sh to /etc/rc.local -="
 fi
+#
+# Set keyboard locale
 #
 echo "=- Set keyboard locale -="
 sudo sed -i -e "s/^XKBLAYOUT=\"gb\"/XKBLAYOUT=\"${COUNTRY_L}\"/" /etc/default/keyboard
 # sudo dpkg-reconfigure keyboard-configuration
 # sudo service keyboard-setup restart
 grep "XKBLAYOUT" /etc/default/keyboard
+#
+# Update various Raspian packages
 #
 echo "=- Update the Raspian O/S -="
 sudo apt-get update
