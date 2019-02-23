@@ -3,7 +3,7 @@
 # ----------------------------------------------------------------------------
 # Miniumum configuration Raspberry PI running raspian
 #  Written by: Phil Huhn
-#  Version 4
+#  Version 5
 #
 # Varialbes:
 COUNTRY=US
@@ -94,7 +94,10 @@ if [ ! -f ${BT_DIR}/btserial.sh ]; then
   sudo chmod 755 ./btserial.sh
   echo "=- Created ${BT_DIR}/btserial.sh file -="
   # now edit /etc/rc.local
-  sudo ed /etc/rc.local <<EOF
+  grep btserial /etc/rc.local > /dev/null
+  if [ $? != 0 ]; then
+    # go to the last line and come up one line and insert commands and then save.
+    sudo ed /etc/rc.local <<EOF
 $
 .-1i
 
@@ -104,7 +107,8 @@ sudo /usr/local/bluetooth/btserial.sh &
 w
 q
 EOF
-  echo "=- Added ${BT_DIR}/btserial.sh to /etc/rc.local -="
+    echo "=- Added ${BT_DIR}/btserial.sh to /etc/rc.local -="
+  fi
 fi
 #
 # Set keyboard locale
