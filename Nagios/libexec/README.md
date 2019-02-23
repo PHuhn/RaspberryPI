@@ -29,6 +29,7 @@ check_state_statusjson. 100%[===============================>]   4.67K  --.-KB/s
 2019-02-05 20:08:17 (9.12 MB/s) - ‘check_state_statusjson.sh’ saved [4777/4777]
 
 $ chmod 755 check_state_statusjson.sh
+$ chown nagios:nagios check_state_statusjson.sh
 $ ./check_state_statusjson.sh -h
 Script: check_state_statusjson.sh, version: 1.0.8
 
@@ -39,6 +40,7 @@ Usage: check_state_statusjson.sh [options]
   -S    service description,  default value: unknown
   -U    user name,            default value: nagiosadmin
   -P    password,             default value: password
+  -v    logging to stdout,    default value: false
 
 Example: check_state_statusjson.sh -H SensorHost -S "sensor-19" -U nagiosuser -P passw0rd
 

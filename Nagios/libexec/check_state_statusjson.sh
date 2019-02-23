@@ -22,6 +22,7 @@ USERID=nagiosadmin
 PASSWD=password
 ESCALATE=true
 LOGGING=true
+VERBOSE=false
 #
 print_help() {
     print_version
@@ -34,6 +35,7 @@ Usage: ${PROGNAME} [options]
   -P    cgi password,         default value: ${PASSWD}
   -e    escalate to critical, default value: ${ESCALATE}
   -l    logging to /tmp,      default value: ${LOGGING}
+  -v    logging to stdout,    default value: ${VERBOSE}
 
   Example: ${PROGNAME} -H SensorHost -S "sensor-19" -U nagiosuser -P passw0rd
 EOF
@@ -63,7 +65,7 @@ case "${1}" in
         ;;
 esac
 #
-while getopts ":e:H:l:S:U:P:" option
+while getopts ":e:H:l:S:U:P:v:" option
 do
     case "${option}"
         in
@@ -73,6 +75,7 @@ do
         P) PASSWD=${OPTARG};;
         e) ESCALATE=`echo ${OPTARG} | tr '[:upper:]' '[:lower:]'`;;
         l) LOGGING=`echo ${OPTARG} | tr '[:upper:]' '[:lower:]'`;;
+        v) VERBOSE=`echo ${OPTARG} | tr '[:upper:]' '[:lower:]'`;;
     esac
 done
 #
@@ -85,6 +88,10 @@ if [ "${LOGGING}" == "true" ]; then
 else
     # if don't want LOG_FILE then change to /dev/null
     LOG_FILE=/dev/null
+fi
+# This overrides LOGGING value
+if [ "${VERBOSE}" == "true" ]; then
+    LOG_FILE=/dev/stdout
 fi
 echo "$$ ${PROGNAME} starting at $(date '+%Y-%m-%d %H:%M:%S') ..." >> ${LOG_FILE}
 #
