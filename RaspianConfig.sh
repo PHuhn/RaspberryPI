@@ -8,16 +8,18 @@
 # Varialbes:
 COUNTRY=US
 TIMEZONE="michigan"
+SERIAL_BT=false
 #
 if [ "$1" == "-h" ]; then
   cat <<EOF
   Usage: $0 [options]
 
   -h    this help text.
-  -c    country code,  default value: ${COUNTRY}
-  -t    timezone code, default value: ${TIMEZONE}
+  -c    country code,     default value: ${COUNTRY}
+  -t    timezone code,    default value: ${TIMEZONE}
+  -s    serial bluetooth, default value: ${SERIAL_BT}
 
-  Example:  $0 -c canada -t eastern
+  Example:  $0 -c canada -t eastern -s true
 
 EOF
   exit
@@ -26,15 +28,20 @@ fi
 echo "=- Configure Raspberry PI -="
 date
 #
-while getopts ":c:t:" option
+# process of arguments
+#
+while getopts ":c:s:t:" option
 do
   echo "Option: ${option}  arg: ${OPTARG}"
   case "${option}"
   in
     c) COUNTRY=${OPTARG};;
     t) TIMEZONE=${OPTARG};;
+    s) SERIAL_BT=`echo ${OPTARG} | tr '[:upper:]' '[:lower:]'`;;
   esac
 done
+#
+# Change pi password
 #
 echo "=- Change password -="
 echo "  ^d to break out of passwd..."
@@ -83,21 +90,22 @@ fi
 #
 # Configure bluetooth serial connection
 #
-BT_DIR=/usr/local/bluetooth
-if [ ! -d "${BT_DIR}" ]; then
-  echo "=- Created ${BT_DIR} directory -="
-  sudo mkdir ${BT_DIR}
-fi
-if [ ! -f ${BT_DIR}/btserial.sh ]; then
-  cd ${BT_DIR}
-  sudo wget https://raw.githubusercontent.com/PHuhn/RaspberryPI/master/btserial.sh
-  sudo chmod 755 ./btserial.sh
-  echo "=- Created ${BT_DIR}/btserial.sh file -="
-  # now edit /etc/rc.local
-  grep btserial /etc/rc.local > /dev/null
-  if [ $? != 0 ]; then
-    # go to the last line and come up one line and insert commands and then save.
-    sudo ed /etc/rc.local <<EOF
+if [ "${SERIAL_BT}" == "true" ]; then
+  BT_DIR=/usr/local/bluetooth
+  if [ ! -d "${BT_DIR}" ]; then
+    echo "=- Created ${BT_DIR} directory -="
+    sudo mkdir ${BT_DIR}
+  fi
+  if [ ! -f ${BT_DIR}/btserial.sh ]; then
+    cd ${BT_DIR}
+    sudo wget https://raw.githubusercontent.com/PHuhn/RaspberryPI/master/btserial.sh
+    sudo chmod 755 ./btserial.sh
+    echo "=- Created ${BT_DIR}/btserial.sh file -="
+    # now edit /etc/rc.local
+    grep btserial /etc/rc.local > /dev/null
+    if [ $? != 0 ]; then
+      # go to the last line and come up one line and insert commands and then save.
+      sudo ed /etc/rc.local <<EOF
 $
 .-1i
 
@@ -107,7 +115,8 @@ sudo /usr/local/bluetooth/btserial.sh &
 w
 q
 EOF
-    echo "=- Added ${BT_DIR}/btserial.sh to /etc/rc.local -="
+      echo "=- Added ${BT_DIR}/btserial.sh to /etc/rc.local -="
+    fi
   fi
 fi
 #
@@ -127,4 +136,4 @@ sudo apt-get dist-upgrade
 #
 date
 echo "=- End of Configure Raspberry PI -="
-#
+# End of script
