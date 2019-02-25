@@ -21,7 +21,7 @@ sudo make altinstall
 cd ..
 sudo rm -r Python-${PY_VER}
 rm Python-${PY_VER}.tar.xz
-sudo apt-get --purge remove build-essential tk-dev libncurses5-dev libncursesw5-dev libreadline6-dev libdb5.3-dev libgdbm-dev libsqlite3-dev libssl-dev libbz2-dev libexpat1-dev liblzma-dev zlib1g-dev libffi-dev -y
+sudo apt-get --purge remove tk-dev libncurses5-dev libncursesw5-dev libreadline6-dev libdb5.3-dev libgdbm-dev libsqlite3-dev libssl-dev libbz2-dev libexpat1-dev liblzma-dev zlib1g-dev libffi-dev -y
 sudo apt-get autoremove -y
 sudo apt-get clean
 #
@@ -30,6 +30,7 @@ sudo python3.7 -m pip install --upgrade pip
 sudo apt update
 sudo apt upgrade
 sudo apt install gcc python3-dev python3-pip libxml2-dev libxslt1-dev zlib1g-dev g++
+sudo apt-get install unixodbc-dev python3-pyodbc
 #
 sudo python3.7 -m pip install gpiozero
 sudo python3.7 -m pip install rpi.gpio
