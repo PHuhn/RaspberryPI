@@ -93,6 +93,7 @@ EOF
     echo "You can remove them, or add additional tokens."
     echo "also edit /etc/apache2/sites-enabled/nrdp.conf to verify desired configuration."
     #
+    rm token.txt
     rm ${SRC_DIR}/nrdp-${NRDP_VER}.tar.gz
   else
     echo "${LINENO} ${PROGNAME}, install of nrdp failed, no ${NRDP_DIR} directory."

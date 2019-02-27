@@ -34,6 +34,8 @@ $ sudo ./NagiosInstall.sh
 $
 ```
 
+If you want to use **check_statusjson_state.sh** command script you will need to edit /usr/local/nagios/etc/objects/commands.cfg and change the password for nagiosadmin or add your own user and password.
+
 ### NagiosNrdpInstall.sh
 
 Installation of Nagios NRDP passive plugin.  Allow one to restfully send passive events to Nagios.  See installed web site:
@@ -97,7 +99,7 @@ $cfg['authorized_tokens'] = array(
 );
 ```
 
-I replaced them with 8 random tokens, from wordpress salt creation.  I replaced all $, % and `, so the token can be eaily used on a DOS or UNIX command line.
+I replaced them with 8 random tokens, either from python 3.7's secrets or from wordpress salt creation.  I replaced all $, %, ` and !, so the token can be eaily used on a DOS or UNIX command line.
 
 ##### nrdp.conf
 
