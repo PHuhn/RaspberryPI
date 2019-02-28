@@ -11,7 +11,7 @@
 #
 # program values:
 PROGNAME=$(basename "$0")
-REVISION="1.0.3"
+REVISION="1.0.5"
 HOME_DIR=`pwd`
 DIR=/usr/local/nagios
 # Varialbes:
@@ -88,6 +88,7 @@ wget https://assets.nagios.com/downloads/nagioscore/releases/nagios-${NAGIOS_VER
 tar zxvf nagios-${NAGIOS_VER}.tar.gz
 if [ -d "/usr/local/src/nagios-${NAGIOS_VER}" ]; then
     cd nagios-${NAGIOS_VER}
+    rm /usr/local/src/nagios-${NAGIOS_VER}.tar.gz
     ./configure --with-command-group=nagcmd LIBS='-ldl'
     make all
     if [ $? != 0 ]; then
@@ -98,7 +99,6 @@ if [ -d "/usr/local/src/nagios-${NAGIOS_VER}" ]; then
     make install-init
     make install-config
     make install-commandmode
-    rm /usr/local/src/nagios-${NAGIOS_VER}.tar.gz
     if [ ! -f "${DIR}/bin/nagios" ]; then
         echo "${LINENO} ${PROGNAME}, install of nagios failed, no bin/nagios"
         exit 1
@@ -155,13 +155,14 @@ if [ -d "nagios-plugins-${PLUGIN_VER}" ]; then
     make
     make install
     rm /usr/local/src/nagios-plugins-${PLUGIN_VER}.tar.gz
+    echo "${LINENO} ${PROGNAME}, installed of plugins"
 else
     echo "${LINENO} ${PROGNAME}, install of plugins failed"
 fi
 # ######################################################## #
 # nagios check_ncpa.py download 
 # https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/4/en/monitoring-windows.html
-if [ -d ${DIR}/libexec ]; then
+if [ -d "${DIR}/libexec" ]; then
     cd ${DIR}/libexec
     if [ ! -f check_ncpa.py ]; then
         wget https://assets.nagios.com/downloads/ncpa/check_ncpa.tar.gz
@@ -184,7 +185,11 @@ define command {
 }
 _EOF
             echo "${LINENO} ${PROGNAME}, configured check_ncpa in ${DIR}/etc/objects/commands.cfg"
+        else
+            echo "${LINENO} ${PROGNAME}, check_ncpa already configured."
         fi
+    else
+        echo "${LINENO} ${PROGNAME}, check_ncpa.py already installed"
     fi
     if [ ! -f check_state_statusjson.sh ]; then
         wget https://raw.githubusercontent.com/PHuhn/RaspberryPI/master/Nagios/libexec/check_state_statusjson.sh
@@ -206,7 +211,11 @@ define command {
 }
 _EOF
             echo "${LINENO} ${PROGNAME}, configured check_statusjson_state in ${DIR}/etc/objects/commands.cfg"
+        else
+            echo "${LINENO} ${PROGNAME}, check_statusjson_state already configured."
         fi
+    else
+        echo "${LINENO} ${PROGNAME}, check_statusjson_state.sh already installed"
     fi
 fi
 # ######################################################## #
