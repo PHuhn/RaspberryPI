@@ -88,13 +88,21 @@ wget https://assets.nagios.com/downloads/nagioscore/releases/nagios-${NAGIOS_VER
 tar zxvf nagios-${NAGIOS_VER}.tar.gz
 if [ -d "/usr/local/src/nagios-${NAGIOS_VER}" ]; then
     cd nagios-${NAGIOS_VER}
-    ./configure --with-command-group=nagcmd
+    ./configure --with-command-group=nagcmd LIBS='-ldl'
     make all
+    if [ $? != 0 ]; then
+        echo "${LINENO} ${PROGNAME}, install of nagios failed, make all returned != 0"
+        exit 1
+    fi
     make install
     make install-init
     make install-config
     make install-commandmode
     rm /usr/local/src/nagios-${NAGIOS_VER}.tar.gz
+    if [ ! -f "${DIR}/bin/nagios" ]; then
+        echo "${LINENO} ${PROGNAME}, install of nagios failed, no bin/nagios"
+        exit 1
+    fi
     #
     install -c -m 644 sample-config/httpd.conf /etc/apache2/sites-enabled/nagios.conf
     mkdir /etc/httpd
@@ -124,12 +132,16 @@ ExecStart=/usr/local/nagios/bin/nagios /usr/local/nagios/etc/nagios.cfg
 EOF
     ${DIR}/bin/nagios -v ${DIR}/etc/nagios.cfg
     #
-    mv /etc/apache2/mods-available/cgi.load /etc/apache2/mods-enabled/
+    mv /etc/apache2/mods-available/cgi.load /etc/apache2/mods-enabled/.
     service apache2 restart
     systemctl enable /etc/systemd/system/nagios.service
     systemctl start nagios
 else
     echo "${LINENO} ${PROGNAME}, install of nagios failed"
+fi
+if [ ! -d /usr/local/nagios/var/spool/checkresults ]; then
+    echo "${LINENO} ${PROGNAME}, install of nagios failed, no var/spool/checkresults"
+    exit 1
 fi
 # ######################################################## #
 # nagios plugins installation
@@ -159,7 +171,7 @@ if [ -d ${DIR}/libexec ]; then
         chmod 755 check_ncpa.py
         echo "${LINENO} ${PROGNAME}, installed check_ncpa.py"
         # if 'command_name' and 'check_ncpa.py' is not in the objects commands file
-        grep "command_name"  ${DIR}/objects/commands.cfg | grep "check_ncpa" >/dev/null 2>&1
+        grep "command_name"  ${DIR}/etc/objects/commands.cfg | grep "check_ncpa" >/dev/null 2>&1
         if [ $? != "0" ]; then
             cat << _EOF >> ${DIR}/etc/objects/commands.cfg
 # ************************************** #
@@ -180,7 +192,7 @@ _EOF
         chown nagios:nagios check_state_statusjson.sh
         echo "${LINENO} ${PROGNAME}, installed check_state_statusjson.sh"
         # if 'command_name' and 'check_statusjson_state' is not in the objects commands file
-        grep "command_name"  ${DIR}/objects/commands.cfg | grep "check_statusjson_state" >/dev/null 2>&1
+        grep "command_name"  ${DIR}/etc/objects/commands.cfg | grep "check_statusjson_state" >/dev/null 2>&1
         if [ $? != "0" ]; then
             echo "******************************************************************"
             echo "Creating statusjson web user for check_state_statusjson.sh script."
@@ -217,7 +229,7 @@ fi
 #
 date
 ls -l ${DIR}/bin/nagios ${DIR}/libexec/check_ncpa.py
-grep "command_name" ${DIR}/objects/commands.cfg | grep "check_ncpa|check_statusjson_state"
+grep "command_name" ${DIR}/etc/objects/commands.cfg | grep "check_ncpa|check_statusjson_state"
 ls -l ${DIR}/share/images/logos/rasp-pi-logo-icon.png ${DIR}/share/images/logos/win10-logo-icon.png
 echo "====================================================================================="
 echo "Need to edit and change password for check_statusjson_state in ${DIR}/etc/objects/commands.cfg"
