@@ -8,10 +8,12 @@
 # http://www.d3noob.org/2016/04/installing-nagios-4-on-raspberry-pi.html
 # How To Install Nagios 4 and Monitor Your Servers on Ubuntu 14.04
 # https://www.digitalocean.com/community/tutorials/how-to-install-nagios-4-and-monitor-your-servers-on-ubuntu-14-04
+# Nagios Core - Installing Nagios Core From Source
+# https://support.nagios.com/kb/article/nagios-core-installing-nagios-core-from-source-96.html#Raspbian
 #
 # program values:
 PROGNAME=$(basename "$0")
-REVISION="1.0.6"
+REVISION="1.0.7"
 HOME_DIR=`pwd`
 DIR=/usr/local/nagios
 # Varialbes:
@@ -207,7 +209,7 @@ _EOF
 # define statusjson state command
 define command {
     command_name            check_statusjson_state
-    command_line            /usr/local/nagios/libexec/check_state_statusjson.sh -H $ARG1$ -S $ARG2$ -U statusjson -P passw0rd
+    command_line            /usr/local/nagios/libexec/check_state_statusjson.sh -H \$ARG1\$ -S \$ARG2\$ -U statusjson -P passw0rd
 }
 _EOF
             echo "${LINENO} ${PROGNAME}, configured check_statusjson_state in ${DIR}/etc/objects/commands.cfg"
