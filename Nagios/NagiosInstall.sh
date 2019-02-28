@@ -11,7 +11,7 @@
 #
 # program values:
 PROGNAME=$(basename "$0")
-REVISION="1.0.5"
+REVISION="1.0.6"
 HOME_DIR=`pwd`
 DIR=/usr/local/nagios
 # Varialbes:
@@ -53,7 +53,7 @@ if [ ! -d "/usr/local/src/" ]; then
     exit 1
 fi
 # ######################################################## #
-# user/group
+# nagios user and group of nagios & nagcmd
 echo "=- add nagios user -="
 grep nagios /etc/passwd > /dev/null
 if [ $? != 0 ]; then
@@ -77,7 +77,7 @@ else
     echo "${LINENO} ${PROGNAME}, nagcmd group exists"
 fi
 # ######################################################## #
-# apache
+# apache installation
 echo "=- install apache web server -="
 apt-get install apache2 libapache2-mod-php7.0 php7.0-json php7.0-xml build-essential libgd2-xpm-dev
 # ######################################################## #
@@ -112,7 +112,7 @@ if [ -d "/usr/local/src/nagios-${NAGIOS_VER}" ]; then
     echo "${LINENO} ${PROGNAME}, enter nagiosadmin password..."
     htpasswd -c ${DIR}/etc/htpasswd.users nagiosadmin
     /etc/init.d/apache2 reload
-    #
+    # even thought using systemd, install initctl
     cp ./startup/default-init /etc/init.d/nagios
     chmod 755 /etc/init.d/nagios
     ln -s /etc/init.d/nagios /etc/rcS.d/S99nagios
@@ -160,7 +160,7 @@ else
     echo "${LINENO} ${PROGNAME}, install of plugins failed"
 fi
 # ######################################################## #
-# nagios check_ncpa.py download 
+# nagios check_ncpa.py and check_state_statusjson.sh downloads
 # https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/4/en/monitoring-windows.html
 if [ -d "${DIR}/libexec" ]; then
     cd ${DIR}/libexec
@@ -235,11 +235,19 @@ if [ -d "${DIR}/share/images/logos" ]; then
 		fi
 	fi
 fi
-#
+# ######################################################## #
+# Summary of activities
 date
-ls -l ${DIR}/bin/nagios ${DIR}/libexec/check_ncpa.py
-grep "command_name" ${DIR}/etc/objects/commands.cfg | grep "check_ncpa|check_statusjson_state"
-ls -l ${DIR}/share/images/logos/rasp-pi-logo-icon.png ${DIR}/share/images/logos/win10-logo-icon.png
+echo "Files added to Nagios"
+ls -l ${DIR}/bin/nagios \
+    ${DIR}/libexec/check_ncpa.py \
+    ${DIR}/libexec/check_state_statusjson.sh \
+    ${DIR}/share/images/logos/rasp-pi-logo-icon.png \
+    ${DIR}/share/images/logos/win10-logo-icon.png
+echo "Commands added to ${DIR}/etc/objects/commands.cfg"
+grep "command_name" ${DIR}/etc/objects/commands.cfg | grep -E "check_ncpa|check_statusjson_state"
+echo "Nagios web access users in ${DIR}/etc/htpasswd.users, should have nagiosadmin and statusjson users."
+cat ${DIR}/etc/htpasswd.users
 echo "====================================================================================="
 echo "Need to edit and change password for check_statusjson_state in ${DIR}/etc/objects/commands.cfg"
 echo "=- End of install of Nagios on Raspberry PI -="
