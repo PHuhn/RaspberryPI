@@ -41,6 +41,11 @@ Download and install updated version of python. Including:
 - gpio
 - pyodbc
 
+This will NOT install a python version that is already installed.  To
+overwrite use the force option.  If you do not want general purpose I/O
+(GPIO) use the false GPIO option.  If you do want ODBC use the true
+ODBC option.
+
 #### Python3_x.sh
 
 ```
@@ -51,8 +56,11 @@ $ ./Python3_x.sh -h
 
   -h    this help text.
   -p    python version, default value: 3.7.2
+  -f    force python,   default value: false
+  -g    install GPIO,   default value: true
+  -o    install ODBC,   default value: false
 
-  Example:  ./Python3_x.sh -p 3.8.0a2
+  Example:  ./Python3_x.sh -p 3.8.0a2 -o true
 
 $ ./Python3_x.sh
 ```
