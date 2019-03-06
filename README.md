@@ -17,6 +17,7 @@ Configuration as follows:
 - configure bluetooth serial connection
 - set keyboard locale
 - update the Raspian O/S
+- setup serial bluetooth
 
 ```
 $ wget https://raw.githubusercontent.com/PHuhn/RaspberryPI/master/RaspianConfig.sh
@@ -27,10 +28,11 @@ $ ./RaspianConfig.sh -h
   -h    this help text.
   -c    country code,  default value: US
   -t    timezone code, default value: michigan
+  -s    serial bluetooth, default value: false
 
   Example:  ./RaspianConfig.sh -c canada -t eastern
 
-$ ./RaspianConfig.sh
+$ ./RaspianConfig.sh -s true
 ```
 
 ### Python 3.x Installation
