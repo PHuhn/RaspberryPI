@@ -7,9 +7,11 @@
 #    2) awk script against nagios/var/status.dat
 # ============================================================================
 # 2019-02-05 V1.0.8 Phil
+# 2019-03-12 V1.0.9 Phil empty PASSWD forces only awk script
+#
 # program values
 PROGNAME=$(basename "$0")
-REVISION="1.0.8"
+REVISION="1.0.9"
 # exit codes
 STATE_OK=0
 STATE_WARNING=1
@@ -19,7 +21,7 @@ STATE_UNKNOWN=3
 HOST=localhost
 SERVICE=unknown
 USERID=nagiosadmin
-PASSWD=password
+PASSWD=
 ESCALATE=true
 LOGGING=true
 VERBOSE=false
@@ -81,7 +83,7 @@ done
 #
 if [ "${LOGGING}" == "true" ]; then
     LOG_FILE=/tmp/${PROGNAME}.log
-    if [ ! -f ${LOG_FILE} ];then
+    if [ ! -f ${LOG_FILE} ]; then
         echo "$$ ${PROGNAME} initializing ..." >> ${LOG_FILE}
         chmod 666 ${LOG_FILE}
     fi
@@ -102,21 +104,25 @@ STATUS_FILE=/usr/local/nagios/var/status.dat
 STATE=
 OUTPUT=
 # can test with wrong password
-curl -v "http://${USERID}:${PASSWD}@localhost/nagios/cgi-bin/statusjson.cgi?${QUERY}" 1> ${FILE} 2> /dev/null
-if [ -s ${FILE} ]; then
-    grep "last_hard_state.:" ${FILE} >/dev/null 2>&1
-    if [ $? == "0" ]; then
-        echo "$$ ${PROGNAME} processing statusjson.cgi" >> ${LOG_FILE}
-        STATE=`grep "last_hard_state.:" ${FILE} | cut -d ":" -f 2 | tr -cd [:digit:]` 2> /dev/null
-        OUTPUT=`grep "\"plugin_output.:" ${FILE} | tr -s ' ' | tr -d '"' |  sed -e 's/ plugin_output: //' -e 's/,$//'` 2> /dev/null
+if [ "X${PASSWD}" != "X" ]; then
+    curl -v "http://${USERID}:${PASSWD}@localhost/nagios/cgi-bin/statusjson.cgi?${QUERY}" 1> ${FILE} 2> /dev/null
+    if [ -s ${FILE} ]; then
+        grep "last_hard_state.:" ${FILE} >/dev/null 2>&1
+        if [ $? == "0" ]; then
+            echo "$$ ${PROGNAME} processing statusjson.cgi" >> ${LOG_FILE}
+            STATE=`grep "last_hard_state.:" ${FILE} | cut -d ":" -f 2 | tr -cd [:digit:]` 2> /dev/null
+            OUTPUT=`grep "\"plugin_output.:" ${FILE} | tr -s ' ' | tr -d '"' |  sed -e 's/ plugin_output: //' -e 's/,$//'` 2> /dev/null
+        fi
+    else
+        echo "$$ ${PROGNAME} statusjson.cgi empty, awk command against ${STATUS_FILE}" >> ${LOG_FILE}
     fi
 fi
 if [ "${STATE}X" == "X" ]; then
-    echo "$$ ${PROGNAME} statusjson.cgi empty, awk command against ${STATUS_FILE}" >> ${LOG_FILE}
     awk -v FS='\n' -v RS='\n\n' -v h_name="${HOST}" -v s_name="${SERVICE}" 'BEGIN {host="host_name="h_name; service="service_description="s_name; print host", "service;}{ if (match($0,host) && match($0,service)) { print "##" $0; } }' ${STATUS_FILE} > ${FILE}
     STATE=`grep "last_hard_state=" ${FILE} | cut -d "=" -f 2 | tr -cd [:digit:]` 2> /dev/null
     OUTPUT=`grep "plugin_output=" ${FILE} | cut -d "=" -f 2 | sed 's/,$//'` 2> /dev/null
 fi
+chmod 666 ${FILE}
 #
 echo "$$ ${PROGNAME} state: ${STATE}, output: ${OUTPUT}" >> ${LOG_FILE}
 # move output file to a single 'last' file
