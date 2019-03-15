@@ -8,7 +8,11 @@ This folder contains scripts to perform Nagios checks as follows:
 
 NRDP (Nagios Remote Data Processor) and NSCA (Nagios Service Check Acceptor) addons allow Nagios to integrate passive alerts and checks from remote machines and applications.
 
-This check_state_statusjson.sh script is meant as a replacement for check_dummy script in a passive service that has **check_freshness** is enabled.
+This check_state_statusjson.sh script is meant as a replacement for check_dummy script in a passive service that has **check_freshness** is enabled.  check_state_statusjson.sh script returns the current status of the service.  This script has two ways to get the current status:
+- statusjson.cgi query
+- awk script against ./nagios/var/status.dat
+
+The statusjson.cgi query requires as a nagios user and password.  If no password is passed to the script, then the script will only use the awk script to get the status. 
 
 #### Installation
 Installation example as follows:
@@ -61,6 +65,8 @@ define command{
     command_line /usr/local/nagios/libexec/check_state_statusjson.sh -H $ARG1$ -S $ARG2$ -P passw0rd
 }
 ```
+
+
 
 In production one might want to turn off logging with **-l false**
 

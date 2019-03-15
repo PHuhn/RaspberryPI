@@ -210,7 +210,7 @@ _EOF
 # define statusjson state command
 define command {
     command_name            check_statusjson_state
-    command_line            /usr/local/nagios/libexec/check_state_statusjson.sh -H \$ARG1\$ -S \$ARG2\$ -U statusjson -P passw0rd
+    command_line            /usr/local/nagios/libexec/check_state_statusjson.sh -H \$ARG1\$ -S \$ARG2\$
 }
 _EOF
             echo "${LINENO} ${PROGNAME}, configured check_statusjson_state in ${INST_DIR}/etc/objects/commands.cfg"
@@ -256,6 +256,9 @@ grep "command_name" ${INST_DIR}/etc/objects/commands.cfg | grep -E "check_ncpa|c
 echo "Nagios web access users in ${INST_DIR}/etc/htpasswd.users, should have nagiosadmin and statusjson users."
 cat ${INST_DIR}/etc/htpasswd.users
 echo "====================================================================================="
-echo "Need to edit and change password for check_statusjson_state in ${INST_DIR}/etc/objects/commands.cfg"
+echo "If you would like to use the check_state_statusjson.sh to call to the cgi interface"
+echo "you need to edit the check_statusjson_state command in the"
+echo "${INST_DIR}/etc/objects/commands.cfg file and add"
+echo "' -U statusjson -P passw0rd' to the command_line.  Empty password, use awk script."
 echo "=- End of install of Nagios on Raspberry PI -="
 #
