@@ -14,12 +14,18 @@ http://&lt;nagios server address&gt;/nagios/
 Also see the /usr/local/nagios/etc/ folder for configuration of active network nodes.
 
 #### Installation
+This will install:
+- nagios
+- nagios plugins
+- check_ncpa.py and configure check command
+- check_state_statusjson.sh and configure check command
+- rasp-pi-logo-icon.png icon
+- win10-logo-icon.png icon
+
 Installation example as follows:
 
 ```
 $ wget https://raw.githubusercontent.com/PHuhn/RaspberryPI/master/Nagios/NagiosInstall.sh
-$ wget https://raw.githubusercontent.com/PHuhn/RaspberryPI/master/Nagios/rasp-pi-logo-icon.png
-$ wget https://raw.githubusercontent.com/PHuhn/RaspberryPI/master/Nagios/win10-logo-icon.png
 $ chmod 755 NagiosInstall.sh
 $ sudo ./NagiosInstall.sh -h
   Usage: NagiosInstall.sh [options]

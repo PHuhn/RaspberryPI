@@ -14,8 +14,7 @@
 # program values:
 PROGNAME=$(basename "$0")
 REVISION="1.0.7"
-HOME_DIR=`pwd`
-DIR=/usr/local/nagios
+INST_DIR=/usr/local/nagios
 # Varialbes:
 NAGIOS_VER=4.4.3
 PLUGIN_VER=2.2.1
@@ -39,11 +38,13 @@ date
 #
 while getopts ":n:p:" option
 do
-  echo "Option: ${option}  arg: ${OPTARG}"
   case "${option}"
   in
     n) NAGIOS_VER=${OPTARG};;
     p) PLUGIN_VER=${OPTARG};;
+    *) echo "Invalid option: ${option}  arg: ${OPTARG}"
+        exit 1
+        ;;
   esac
 done
 # addon source directory
@@ -85,12 +86,12 @@ apt-get install apache2 libapache2-mod-php7.0 php7.0-json php7.0-xml build-essen
 # ######################################################## #
 # nagios installation
 echo "=- install nagios core -="
-cd /usr/local/src/
-wget https://assets.nagios.com/downloads/nagioscore/releases/nagios-${NAGIOS_VER}.tar.gz
-tar zxvf nagios-${NAGIOS_VER}.tar.gz
+cd /usr/local/src/ || exit
+wget "https://assets.nagios.com/downloads/nagioscore/releases/nagios-${NAGIOS_VER}.tar.gz"
+tar zxvf "nagios-${NAGIOS_VER}.tar.gz"
 if [ -d "/usr/local/src/nagios-${NAGIOS_VER}" ]; then
-    cd nagios-${NAGIOS_VER}
-    rm /usr/local/src/nagios-${NAGIOS_VER}.tar.gz
+    cd "nagios-${NAGIOS_VER}" || exit
+    rm "/usr/local/src/nagios-${NAGIOS_VER}.tar.gz"
     ./configure --with-command-group=nagcmd LIBS='-ldl'
     make all
     if [ $? != 0 ]; then
@@ -101,7 +102,7 @@ if [ -d "/usr/local/src/nagios-${NAGIOS_VER}" ]; then
     make install-init
     make install-config
     make install-commandmode
-    if [ ! -f "${DIR}/bin/nagios" ]; then
+    if [ ! -f "${INST_DIR}/bin/nagios" ]; then
         echo "${LINENO} ${PROGNAME}, install of nagios failed, no bin/nagios"
         exit 1
     fi
@@ -112,7 +113,7 @@ if [ -d "/usr/local/src/nagios-${NAGIOS_VER}" ]; then
     mkdir /etc/httpd/conf.d/nagios.conf
     make install-webconf
     echo "${LINENO} ${PROGNAME}, enter nagiosadmin password..."
-    htpasswd -c ${DIR}/etc/htpasswd.users nagiosadmin
+    htpasswd -c ${INST_DIR}/etc/htpasswd.users nagiosadmin
     /etc/init.d/apache2 reload
     # even thought using systemd, install initctl
     cp ./startup/default-init /etc/init.d/nagios
@@ -132,7 +133,7 @@ Group=nagios
 Type=simple
 ExecStart=/usr/local/nagios/bin/nagios /usr/local/nagios/etc/nagios.cfg
 EOF
-    ${DIR}/bin/nagios -v ${DIR}/etc/nagios.cfg
+    ${INST_DIR}/bin/nagios -v ${INST_DIR}/etc/nagios.cfg
     #
     mv /etc/apache2/mods-available/cgi.load /etc/apache2/mods-enabled/.
     service apache2 restart
@@ -148,15 +149,15 @@ fi
 # ######################################################## #
 # nagios plugins installation
 echo "=- install nagios plugins -="
-cd /usr/local/src/
-wget http://www.nagios-plugins.org/download/nagios-plugins-${PLUGIN_VER}.tar.gz
-tar zxvf nagios-plugins-${PLUGIN_VER}.tar.gz
+cd /usr/local/src/ || exit
+wget "http://www.nagios-plugins.org/download/nagios-plugins-${PLUGIN_VER}.tar.gz"
+tar zxvf "nagios-plugins-${PLUGIN_VER}.tar.gz"
 if [ -d "nagios-plugins-${PLUGIN_VER}" ]; then
-    cd nagios-plugins-${PLUGIN_VER}
+    cd "nagios-plugins-${PLUGIN_VER}" || exit
     ./configure --with-nagios-user=nagios --with-nagios-group=nagios
     make
     make install
-    rm /usr/local/src/nagios-plugins-${PLUGIN_VER}.tar.gz
+    rm "/usr/local/src/nagios-plugins-${PLUGIN_VER}.tar.gz"
     echo "${LINENO} ${PROGNAME}, installed of plugins"
 else
     echo "${LINENO} ${PROGNAME}, install of plugins failed"
@@ -164,8 +165,8 @@ fi
 # ######################################################## #
 # nagios check_ncpa.py and check_state_statusjson.sh downloads
 # https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/4/en/monitoring-windows.html
-if [ -d "${DIR}/libexec" ]; then
-    cd ${DIR}/libexec
+if [ -d "${INST_DIR}/libexec" ]; then
+    cd "${INST_DIR}/libexec" || exit
     if [ ! -f check_ncpa.py ]; then
         wget https://assets.nagios.com/downloads/ncpa/check_ncpa.tar.gz
         tar xvf check_ncpa.tar.gz
@@ -174,9 +175,9 @@ if [ -d "${DIR}/libexec" ]; then
         chmod 755 check_ncpa.py
         echo "${LINENO} ${PROGNAME}, installed check_ncpa.py"
         # if 'command_name' and 'check_ncpa.py' is not in the objects commands file
-        grep "command_name"  ${DIR}/etc/objects/commands.cfg | grep "check_ncpa" >/dev/null 2>&1
+        grep "command_name"  ${INST_DIR}/etc/objects/commands.cfg | grep "check_ncpa" >/dev/null 2>&1
         if [ $? != "0" ]; then
-            cat << _EOF >> ${DIR}/etc/objects/commands.cfg
+            cat << _EOF >> ${INST_DIR}/etc/objects/commands.cfg
 # ************************************** #
 # Commands section, defined all commands #
 # ************************************** #
@@ -186,7 +187,7 @@ define command {
     command_line            \$USER1\$/check_ncpa.py -H \$HOSTADDRESS\$ \$ARG1\$
 }
 _EOF
-            echo "${LINENO} ${PROGNAME}, configured check_ncpa in ${DIR}/etc/objects/commands.cfg"
+            echo "${LINENO} ${PROGNAME}, configured check_ncpa in ${INST_DIR}/etc/objects/commands.cfg"
         else
             echo "${LINENO} ${PROGNAME}, check_ncpa already configured."
         fi
@@ -199,58 +200,62 @@ _EOF
         chown nagios:nagios check_state_statusjson.sh
         echo "${LINENO} ${PROGNAME}, installed check_state_statusjson.sh"
         # if 'command_name' and 'check_statusjson_state' is not in the objects commands file
-        grep "command_name"  ${DIR}/etc/objects/commands.cfg | grep "check_statusjson_state" >/dev/null 2>&1
+        grep "command_name"  ${INST_DIR}/etc/objects/commands.cfg | grep "check_statusjson_state" >/dev/null 2>&1
         if [ $? != "0" ]; then
             echo "******************************************************************"
             echo "Creating statusjson web user for check_state_statusjson.sh script."
-            htpasswd ${DIR}/etc/htpasswd.users statusjson
+            htpasswd ${INST_DIR}/etc/htpasswd.users statusjson
             #
-            cat << _EOF >> ${DIR}/etc/objects/commands.cfg
+            cat << _EOF >> ${INST_DIR}/etc/objects/commands.cfg
 # define statusjson state command
 define command {
     command_name            check_statusjson_state
     command_line            /usr/local/nagios/libexec/check_state_statusjson.sh -H \$ARG1\$ -S \$ARG2\$ -U statusjson -P passw0rd
 }
 _EOF
-            echo "${LINENO} ${PROGNAME}, configured check_statusjson_state in ${DIR}/etc/objects/commands.cfg"
+            echo "${LINENO} ${PROGNAME}, configured check_statusjson_state in ${INST_DIR}/etc/objects/commands.cfg"
         else
             echo "${LINENO} ${PROGNAME}, check_statusjson_state already configured."
         fi
     else
         echo "${LINENO} ${PROGNAME}, check_statusjson_state.sh already installed"
     fi
+else
+    echo "${LINENO} ${PROGNAME}, directory ${INST_DIR}/libexec does not exist"
 fi
 # ######################################################## #
 # nagios host icon logos
-if [ -d "${DIR}/share/images/logos" ]; then
-	echo "Nagios installed and ${DIR}/share/images exists."
-	if [ -f "${HOME_DIR}/rasp-pi-logo-icon.png" ]; then
-		if [ ! -f "${DIR}/share/images/logos/rasp-pi-logo-icon.png" ]; then
-			echo "cp ${HOME_DIR}/rasp-pi-logo-icon.png ${DIR}/share/images/logos/."
-			sudo cp ${HOME_DIR}/rasp-pi-logo-icon.png ${DIR}/share/images/logos/.
-		fi
-	fi
-	if [ -f "${HOME_DIR}/win10-logo-icon.png" ]; then
-		if [ ! -f "${DIR}/share/images/logos/win10-logo-icon.png" ]; then
-			echo "cp ${HOME_DIR}/win10-logo-icon.png ${DIR}/share/images/logos/."
-			sudo cp ${HOME_DIR}/win10-logo-icon.png ${DIR}/share/images/logos/.
-		fi
-	fi
+if [ -d "${INST_DIR}/share/images/logos" ]; then
+    echo "Nagios installed and ${INST_DIR}/share/images exists."
+    cd "${INST_DIR}/share/images/logos" || exit
+    if [ ! -f rasp-pi-logo-icon.png ]; then
+        echo "getting ${INST_DIR}/rasp-pi-logo-icon.png"
+        sudo wget https://raw.githubusercontent.com/PHuhn/RaspberryPI/master/Nagios/rasp-pi-logo-icon.png
+        sudo chown nagios:nagios rasp-pi-logo-icon.png
+    fi
+    if [ ! -f win10-logo-icon.png ]; then
+        echo "getting ${INST_DIR}/win10-logo-icon.png"
+        sudo wget https://raw.githubusercontent.com/PHuhn/RaspberryPI/master/Nagios/win10-logo-icon.png
+        sudo chown nagios:nagios win10-logo-icon.png
+    fi
+    cd "${INST_DIR}" || exit
+else
+    echo "${LINENO} ${PROGNAME}, directory ${INST_DIR}/share/images/logos does not exist"
 fi
 # ######################################################## #
 # Summary of activities
 date
 echo "Files added to Nagios"
-ls -l ${DIR}/bin/nagios \
-    ${DIR}/libexec/check_ncpa.py \
-    ${DIR}/libexec/check_state_statusjson.sh \
-    ${DIR}/share/images/logos/rasp-pi-logo-icon.png \
-    ${DIR}/share/images/logos/win10-logo-icon.png
-echo "Commands added to ${DIR}/etc/objects/commands.cfg"
-grep "command_name" ${DIR}/etc/objects/commands.cfg | grep -E "check_ncpa|check_statusjson_state"
-echo "Nagios web access users in ${DIR}/etc/htpasswd.users, should have nagiosadmin and statusjson users."
-cat ${DIR}/etc/htpasswd.users
+ls -l ${INST_DIR}/bin/nagios \
+    ${INST_DIR}/libexec/check_ncpa.py \
+    ${INST_DIR}/libexec/check_state_statusjson.sh \
+    ${INST_DIR}/share/images/logos/rasp-pi-logo-icon.png \
+    ${INST_DIR}/share/images/logos/win10-logo-icon.png
+echo "Commands added to ${INST_DIR}/etc/objects/commands.cfg"
+grep "command_name" ${INST_DIR}/etc/objects/commands.cfg | grep -E "check_ncpa|check_statusjson_state"
+echo "Nagios web access users in ${INST_DIR}/etc/htpasswd.users, should have nagiosadmin and statusjson users."
+cat ${INST_DIR}/etc/htpasswd.users
 echo "====================================================================================="
-echo "Need to edit and change password for check_statusjson_state in ${DIR}/etc/objects/commands.cfg"
+echo "Need to edit and change password for check_statusjson_state in ${INST_DIR}/etc/objects/commands.cfg"
 echo "=- End of install of Nagios on Raspberry PI -="
 #
