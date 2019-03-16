@@ -3,11 +3,10 @@
 # ----------------------------------------------------------------------------
 # Create a basic hosts.cfg file
 #  Written by: Phil Huhn
-#  Version 1
 #
 # program values:
 PROGNAME=$(basename "$0")
-REVISION="1.0.0"
+REVISION="1.0.1"
 # Varialbes:
 IP_SEG=192.168.0.
 CHECK_ALIVE=true
@@ -19,7 +18,6 @@ echo ""
 #
 if [ "$1" == "-h" ]; then
     cat <<EOF
-    ${PROGNAME} version: ${REVISION}
 
     Usage: ${PROGNAME} [options]
 
@@ -57,6 +55,9 @@ do
             ;;
     esac
 done
+#
+echo "=- Running ${PROGNAME} ${REVISION} -="
+date
 #
 if [ "${IP_SEG: -1}" != "." ]; then
     IP_SEG=${IP_SEG}.
