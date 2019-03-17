@@ -59,10 +59,11 @@ $ ./Python3_x.sh -h
   -h    this help text.
   -p    python version, default value: 3.7.2
   -f    force python,   default value: false
+  -l    link python3,   default value: false
   -g    install GPIO,   default value: true
   -o    install ODBC,   default value: false
 
-  Example:  ./Python3_x.sh -p 3.8.0a2 -o true
+  Example:  ./Python3_x.sh -p 3.8.0a2 -o true -l true
 
 $ ./Python3_x.sh
 ```
