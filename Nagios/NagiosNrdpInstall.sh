@@ -3,25 +3,27 @@
 # ----------------------------------------------------------------------------
 # Install Nagios NRDP on a Raspberry PI running raspian
 #  Written by: Phil Huhn
-#  Version 5
 #
 # NRDP - Installing NRDP From Source
 # https://support.nagios.com/kb/article/nrdp-installing-nrdp-from-source-602.html#Raspbian
 #
 # program values:
 PROGNAME=$(basename "$0")
-REVISION="1.0.5"
+REVISION="1.0.6"
 NRDP_DIR=/usr/local/nrdp
 SRC_DIR=/usr/local/src
-# Options Varialbes:
+# Options variables:
 NRDP_VER=1.5.2
+FORCE=false
 #
 if [ "$1" == "-h" ]; then
   cat <<EOF
+
   Usage: ${PROGNAME} [options]
 
   -h    this help text.
   -n    nagios nrdp version, default value: ${NRDP_VER}
+  -f    force installation,  default value: ${FORCE}
 
   Example:  ${PROGNAME} -n 1.5.1
 
@@ -32,39 +34,49 @@ fi
 echo "=- Running ${PROGNAME} ${REVISION} -="
 date
 #
-while getopts ":n:" option
+while getopts ":n:f:" option
 do
-  echo "Option: ${option}  arg: ${OPTARG}"
   case "${option}"
   in
     n) NRDP_VER=${OPTARG};;
+    f) FORCE=$(echo "${OPTARG}" | tr '[:upper:]' '[:lower:]');;
+    *) echo "Invalid option: ${option}  arg: ${OPTARG}"
+      exit 1
+      ;;
   esac
 done
+# check for previous installation of nrdp
+if [ -d "${NRDP_DIR}" ] || [ -f /etc/apache2/sites-enabled/nrdp.conf ]; then
+  if [ "X${FORCE}" != "Xtrue" ]; then
+    echo "${LINENO} ${PROGNAME}, NRDP already installed, maybe use the force option."
+    exit 1
+  fi
+fi
 # addon source directory
 if [ ! -d "${SRC_DIR}" ]; then
-  mkdir -p ${SRC_DIR}
+  mkdir -p "${SRC_DIR}"
 fi
 if [ ! -d "${SRC_DIR}" ]; then
   echo "${LINENO} ${PROGNAME}, failed to create src dir."
   exit 1
 fi
-cd ${SRC_DIR}
+cd "${SRC_DIR}" || exit 2
 #
-wget -O nrdp-${NRDP_VER}.tar.gz https://github.com/NagiosEnterprises/nrdp/archive/${NRDP_VER}.tar.gz
-tar xvf nrdp-${NRDP_VER}.tar.gz
+wget -O "nrdp-${NRDP_VER}.tar.gz" "https://github.com/NagiosEnterprises/nrdp/archive/${NRDP_VER}.tar.gz"
+tar xvf "nrdp-${NRDP_VER}.tar.gz"
 #
 if [ -d "${SRC_DIR}/nrdp-${NRDP_VER}" ]; then
-  cd ${SRC_DIR}/nrdp-${NRDP_VER}
-  mkdir -p ${NRDP_DIR}
+  cd "${SRC_DIR}/nrdp-${NRDP_VER}" || exit 3
+  mkdir -p "${NRDP_DIR}"
   if [ -d "${NRDP_DIR}" ]; then
     apt-get update
     apt-get install -y php-xml
-    cp -r clients server LICENSE* CHANGES* ${NRDP_DIR}
-    chown -R nagios:nagios ${NRDP_DIR}
+    cp -r clients server LICENSE* CHANGES* "${NRDP_DIR}"
+    chown -R nagios:nagios "${NRDP_DIR}"
     cp nrdp.conf /etc/apache2/sites-enabled/.
     systemctl restart apache2.service
     # generate 8 random 64 byte tokens with python secrets
-    which python3.7
+    which python3.7 > /dev/null
     if [ $? == 0 ]; then
       python3.7 << _EOF >> token.txt
 import secrets as Secrets
@@ -78,7 +90,7 @@ _EOF
     fi
     # edit the nrdp config file by finding the 2 fake tokens and delete them,
     # then read in the token.txt at that point, write and quit
-    ed ${NRDP_DIR}/server/config.inc.php <<EOF
+    ed "${NRDP_DIR}/server/config.inc.php" <<EOF
 /mysecrettoken/
 .,+1d
 .-1r token.txt
@@ -94,7 +106,7 @@ EOF
     echo "also edit /etc/apache2/sites-enabled/nrdp.conf to verify desired configuration."
     #
     rm token.txt
-    rm ${SRC_DIR}/nrdp-${NRDP_VER}.tar.gz
+    rm "${SRC_DIR}/nrdp-${NRDP_VER}.tar.gz"
   else
     echo "${LINENO} ${PROGNAME}, install of nrdp failed, no ${NRDP_DIR} directory."
   fi
@@ -105,4 +117,4 @@ fi
 #
 date
 echo "=- End of install of NRDP on Raspberry PI -="
-# 
+#
