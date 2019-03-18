@@ -3,7 +3,8 @@
 # ----------------------------------------------------------------------------
 # Miniumum configuration Raspberry PI running raspian
 #  Written by: Phil Huhn
-#  Version 5
+#  Version 6
+# 2019-03-18 Phil  Lint with www.shellcheck.net
 #
 # Varialbes:
 COUNTRY=US
@@ -32,12 +33,14 @@ date
 #
 while getopts ":c:s:t:" option
 do
-  echo "Option: ${option}  arg: ${OPTARG}"
   case "${option}"
   in
     c) COUNTRY=${OPTARG};;
     t) TIMEZONE=${OPTARG};;
-    s) SERIAL_BT=`echo ${OPTARG} | tr '[:upper:]' '[:lower:]'`;;
+    s) SERIAL_BT=$(echo "${OPTARG}" | tr '[:upper:]' '[:lower:]');;
+    *) echo "Invalid option: ${option}  arg: ${OPTARG}"
+      exit 1
+      ;;
   esac
 done
 #
@@ -50,31 +53,31 @@ passwd
 COUNTRY_L=$(echo "${COUNTRY}" | tr '[:upper:]' '[:lower:]')
 COUNTRY_U=$(echo "${COUNTRY}" | tr '[:lower:]' '[:upper:]')
 COUNTRY_M="${COUNTRY_U:0:1}${COUNTRY_L:1}"
-# echo ${COUNTRY_L} ${COUNTRY_U} ${COUNTRY_M}
+# echo "${COUNTRY_L} ${COUNTRY_U} ${COUNTRY_M}"
 #
 TIMEZONE_L=$(echo "${TIMEZONE}" | tr '[:upper:]' '[:lower:]')
 TIMEZONE_U=$(echo "${TIMEZONE}" | tr '[:lower:]' '[:upper:]')
 TIMEZONE_M="${TIMEZONE_U:0:1}${TIMEZONE_L:1}"
-# echo ${TIMEZONE_L} ${TIMEZONE_U} ${TIMEZONE_M}
+# echo "${TIMEZONE_L} ${TIMEZONE_U} ${TIMEZONE_M}"
 #
 # Some countries are just uppercase and some are mixed case,
 # some are directories and some are files.
 echo "=- Set timezone -="
 if [ -d "/usr/share/zoneinfo/${COUNTRY_U}" ]; then
-  echo ${COUNTRY_U}/${TIMEZONE_M}
-  sudo ln -sf /usr/share/zoneinfo/${COUNTRY_U}/${TIMEZONE_M} /etc/localtime
+  echo "${COUNTRY_U}/${TIMEZONE_M}"
+  sudo ln -sf "/usr/share/zoneinfo/${COUNTRY_U}/${TIMEZONE_M}" /etc/localtime
 else
   if [ -d "/usr/share/zoneinfo/${COUNTRY_M}" ]; then
-    echo ${COUNTRY_M}/${TIMEZONE_M}
-    sudo ln -sf /usr/share/zoneinfo/${COUNTRY_M}/${TIMEZONE_M} /etc/localtime
+    echo "${COUNTRY_M}/${TIMEZONE_M}"
+    sudo ln -sf "/usr/share/zoneinfo/${COUNTRY_M}/${TIMEZONE_M}" /etc/localtime
   else
     if [ -f "/usr/share/zoneinfo/${COUNTRY_U}" ]; then
-      echo ${COUNTRY_U}
-      sudo ln -sf /usr/share/zoneinfo/${COUNTRY_U} /etc/localtime
+      echo "${COUNTRY_U}"
+      sudo ln -sf "/usr/share/zoneinfo/${COUNTRY_U}" /etc/localtime
     else
       if [ -f "/usr/share/zoneinfo/${COUNTRY_M}" ]; then
-        echo ${COUNTRY_M}
-        sudo ln -sf /usr/share/zoneinfo/${COUNTRY_M} /etc/localtime
+        echo "${COUNTRY_M}"
+        sudo ln -sf "/usr/share/zoneinfo/${COUNTRY_M}" /etc/localtime
       else
         echo "Timezone of ${COUNTRY_U} and ${TIMEZONE_M}, not set."
       fi
@@ -84,7 +87,7 @@ fi
 if [ ! -e /etc/localtime ] ; then
   ls -l /etc/localtime
   echo "Broken timezone link."
-  echo sudo ln -sf /usr/share/zoneinfo/{COUNTRY}/{TIMEZONE} /etc/localtime
+  echo sudo ln -sf "/usr/share/zoneinfo/{COUNTRY}/{TIMEZONE}" /etc/localtime
   ls /usr/share/zoneinfo/
 fi
 #
@@ -96,8 +99,8 @@ if [ "${SERIAL_BT}" == "true" ]; then
     echo "=- Created ${BT_DIR} directory -="
     sudo mkdir ${BT_DIR}
   fi
-  if [ ! -f ${BT_DIR}/btserial.sh ]; then
-    cd ${BT_DIR}
+  if [ ! -f "${BT_DIR}/btserial.sh" ]; then
+    cd "${BT_DIR}" || exit
     sudo wget https://raw.githubusercontent.com/PHuhn/RaspberryPI/master/btserial.sh
     sudo chmod 755 ./btserial.sh
     echo "=- Created ${BT_DIR}/btserial.sh file -="
