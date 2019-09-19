@@ -89,7 +89,7 @@ if [ $? != 0 ] || [ "x${FORCE}" == "xtrue" ]; then
     echo "${LINENO} ${PROGNAME}, python failed to build, ..."
     exit 1
   fi
-  sudo "python${PY_CMD}" -m pip install --upgrade pip
+  sudo apt install python3-pip
   #
   if [ "X${LINK}" == Xtrue ]; then
     sudo rm /usr/bin/python3
@@ -107,9 +107,10 @@ sudo apt upgrade
 sudo apt-get install unixodbc-dev
 #
 if [ "x${GPIO}" == "xtrue" ]; then
+  sudo apt-get update -y
   echo "${LINENO} ${PROGNAME}, installing GPIO, ..."
-  sudo "python${PY_CMD}" -m pip install gpiozero
-  sudo "python${PY_CMD}" -m pip install rpi.gpio
+  sudo apt install python3-gpiozero
+  sudo apt install python3-rpi.gpio
   sudo "python${PY_CMD}" -m pip install pigpio
   sudo "python${PY_CMD}" -m pip install RPIO
 else
