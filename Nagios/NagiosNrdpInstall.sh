@@ -9,11 +9,11 @@
 #
 # program values:
 PROGNAME=$(basename "$0")
-REVISION="1.0.6"
+REVISION="1.0.7"
 NRDP_DIR=/usr/local/nrdp
 SRC_DIR=/usr/local/src
 # Options variables:
-NRDP_VER=1.5.2
+NRDP_VER=2.0.2
 FORCE=false
 #
 if [ "$1" == "-h" ]; then
@@ -25,7 +25,7 @@ if [ "$1" == "-h" ]; then
   -n    nagios nrdp version, default value: ${NRDP_VER}
   -f    force installation,  default value: ${FORCE}
 
-  Example:  ${PROGNAME} -n 1.5.1
+  Example:  ${PROGNAME} -n 1.5.2
 
 EOF
   exit

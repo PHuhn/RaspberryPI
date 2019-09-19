@@ -13,21 +13,21 @@
 #
 # program values:
 PROGNAME=$(basename "$0")
-REVISION="1.0.7"
+REVISION="1.0.8"
 INST_DIR=/usr/local/nagios
-# Varialbes:
-NAGIOS_VER=4.4.3
+# Variables:
+NAGIOS_VER=4.4.5
 PLUGIN_VER=2.2.1
 #
 if [ "$1" == "-h" ]; then
   cat <<EOF
   Usage: ${PROGNAME} [options]
 
-  -h    this help text.
-  -n    nagios version, default value: ${NAGIOS_VER}
-  -p    plugin version, default value: ${PLUGIN_VER}
+    -h    this help text.
+    -n    nagios version, default value: ${NAGIOS_VER}
+    -p    plugin version, default value: ${PLUGIN_VER}
 
-  Example:  ${PROGNAME} -n 4.4.2 -p 2.2.1
+    Example:  ${PROGNAME} -n 4.4.3 -p 2.2.1
 
 EOF
   exit
@@ -38,14 +38,14 @@ date
 #
 while getopts ":n:p:" option
 do
-  case "${option}"
-  in
-    n) NAGIOS_VER=${OPTARG};;
-    p) PLUGIN_VER=${OPTARG};;
-    *) echo "Invalid option: ${option}  arg: ${OPTARG}"
-        exit 1
-        ;;
-  esac
+    case "${option}"
+    in
+        n) NAGIOS_VER=${OPTARG};;
+        p) PLUGIN_VER=${OPTARG};;
+        *) echo "Invalid option: ${option} arg: ${OPTARG}"
+            exit 1
+            ;;
+    esac
 done
 # addon source directory
 if [ ! -d "/usr/local/src/" ]; then
@@ -82,7 +82,11 @@ fi
 # ######################################################## #
 # apache installation
 echo "=- install apache web server -="
-apt-get install apache2 libapache2-mod-php7.0 php7.0-json php7.0-xml build-essential libgd2-xpm-dev
+apt-get install apache2 libapache2-mod-php7.3 php7.3-json php7.3-xml build-essential libgd-dev
+if [ ! -f /usr/sbin/apache2 ]; then
+    echo "${LINENO} ${PROGNAME}, install of apache failed, no /usr/sbin/apache2 file."
+    exit 1
+fi
 # ######################################################## #
 # nagios installation
 echo "=- install nagios core -="

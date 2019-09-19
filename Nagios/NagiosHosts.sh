@@ -58,6 +58,17 @@ done
 #
 echo "=- Running ${PROGNAME} ${REVISION} -="
 date
+# ===============================
+# Install nbtscan (netbios scan)
+# ===============================
+pkg_not_exists=$(dpkg-query -W nbtscan)
+if [ $? != 0 ] || [ $(echo ${pkg_not_exists} | tr -d "\t") == "nbtscan" ]; then
+    echo "=- Installing nbtscan -="
+    sudo apt-get install nbtscan
+else
+    echo "=- Skipping nbtscan install -="
+    dpkg-query -W nbtscan
+fi
 #
 if [ "${IP_SEG: -1}" != "." ]; then
     IP_SEG=${IP_SEG}.
@@ -67,7 +78,13 @@ while [  $COUNTER -lt 255 ]; do
     IP_ADDR=${IP_SEG}${COUNTER}
     PG=$(ping -c 1 -a "${IP_ADDR}")
     if [ $? == 0 ]; then
-        ALIAS=$(echo "${PG}" | head -n 1 | cut -d ' ' -f 2 | tr '.' '_')
+        ALIAS=""
+        NB_NAME_LINE=`nbtscan ${IP_ADDR} | tail -n 1`
+        if [[ ${NB_NAME_LINE:0:4} == "----" ]]; then
+            ALIAS=$(echo "${PG}" | head -n 1 | cut -d ' ' -f 2 | tr '.' '_')
+        else
+            ALIAS=`echo $NB_NAME_LINE | cut -f2 -d " "`
+        fi
         IP=$(echo "${PG}" | head -n 1 | cut -d ' ' -f 3 | tr -d '\(\)')
         if [ "X${IP_ADDR}" == "X${IP}" ]; then
             echo "define host {"                          | tee -a "${FILE}"
