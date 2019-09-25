@@ -110,7 +110,7 @@ if [ "x${GPIO}" == "xtrue" ]; then
   sudo apt-get update -y
   echo "${LINENO} ${PROGNAME}, installing GPIO, ..."
   sudo apt install python3-gpiozero
-  sudo apt install python3-rpi.gpio
+  # sudo apt install python3-rpi.gpio (now automatically installed)
   sudo "python${PY_CMD}" -m pip install pigpio
   sudo "python${PY_CMD}" -m pip install RPIO
 else

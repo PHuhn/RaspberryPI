@@ -6,7 +6,7 @@
 #
 # program values:
 PROGNAME=$(basename "$0")
-REVISION="1.0.1"
+REVISION="1.1.0"
 # Varialbes:
 IP_SEG=192.168.0.
 CHECK_ALIVE=true
@@ -62,20 +62,19 @@ date
 # Install nbtscan (netbios scan)
 # ===============================
 pkg_not_exists=$(dpkg-query -W nbtscan)
-if [ $? != 0 ] || [ $(echo ${pkg_not_exists} | tr -d "\t") == "nbtscan" ]; then
+if [ $? != 0 ] || [ $(echo ${pkg_not_exists} | cut -d" " -f1) != "nbtscan" ]; then
     echo "=- Installing nbtscan -="
     sudo apt-get install nbtscan
 else
     echo "=- Skipping nbtscan install -="
-    dpkg-query -W nbtscan
+    echo ${pkg_not_exists}
+    echo ""
 fi
 #
-if [ "${IP_SEG: -1}" != "." ]; then
-    IP_SEG=${IP_SEG}.
-fi
-COUNTER=1
-while [  $COUNTER -lt 255 ]; do
-    IP_ADDR=${IP_SEG}${COUNTER}
+# 'arp -a' is returning the following:
+# ? (192.168.0.26) at 34:f6:4b:6c:31:d0 [ether] on wlan0
+for IP_ADDR in $(arp -a | cut -d" " -f2 | sed -e 's/^.//' -e 's/.$//' | sort); do
+    echo ${IP_ADDR}
     PG=$(ping -c 1 -a "${IP_ADDR}")
     if [ $? == 0 ]; then
         ALIAS=""
@@ -106,6 +105,5 @@ while [  $COUNTER -lt 255 ]; do
     else
         echo "IP ${IP_ADDR} not active..."
     fi
-    (( COUNTER++ ))
 done
 # end-of-script
