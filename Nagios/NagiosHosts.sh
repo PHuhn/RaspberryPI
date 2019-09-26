@@ -6,8 +6,8 @@
 #
 # program values:
 PROGNAME=$(basename "$0")
-REVISION="1.1.1"
-# Varialbes:
+REVISION="1.1.2"
+# Parameter varialbes:
 IP_SEG=192.168.0.
 CHECK_ALIVE=true
 FILE=./hosts.cfg
@@ -16,7 +16,7 @@ MY_IP=$(ifconfig | grep "inet " | grep -v 127.0.0 | tr -s " " | cut -d " " -f 3 
 echo "My ip address is: ${MY_IP}"
 echo ""
 #
-if [ "$1" == "-h" ]; then
+function displayHelp {
     cat <<EOF
 
     Usage: ${PROGNAME} [options]
@@ -39,7 +39,12 @@ if [ "$1" == "-h" ]; then
         active_checks_enabled 1
     }
     #
+
 EOF
+}
+
+if [ "$1" == "-h" ] || [ "$1" == "-?" ]; then
+    displayHelp
     exit
 fi
 #
@@ -50,7 +55,8 @@ do
         i) IP_SEG=${OPTARG};;
         c) CHECK_ALIVE=${OPTARG};;
         f) FILE=${OPTARG};;
-        *) echo "Invalid option: ${option}  arg: ${OPTARG}"
+        *) displayHelp
+            echo -e "\nInvalid option: ${option}  arg: ${OPTARG}\n"
             exit 1
             ;;
     esac
