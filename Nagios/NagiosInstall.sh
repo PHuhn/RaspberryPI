@@ -230,7 +230,7 @@ fi
 # ######################################################## #
 # nagios host icon logos
 if [ -d "${INST_DIR}/share/images/logos" ]; then
-    echo "Nagios installed and ${INST_DIR}/share/images exists."
+    echo "${LINENO} ${PROGNAME}, Nagios installed and ${INST_DIR}/share/images exists."
     cd "${INST_DIR}/share/images/logos" || exit
     if [ ! -f rasp-pi-logo-icon.png ]; then
         echo "getting ${INST_DIR}/rasp-pi-logo-icon.png"
@@ -242,19 +242,26 @@ if [ -d "${INST_DIR}/share/images/logos" ]; then
         sudo wget https://raw.githubusercontent.com/PHuhn/RaspberryPI/master/Nagios/win10-logo-icon.png
         sudo chown nagios:nagios win10-logo-icon.png
     fi
+    if [ ! -f win-server-logo-icon.png ]; then
+        echo "getting ${INST_DIR}/win-server-logo-icon.png"
+        sudo wget https://raw.githubusercontent.com/PHuhn/RaspberryPI/master/Nagios/win-server-logo-icon.png
+        sudo chown nagios:nagios win-server-logo-icon.png
+    fi
     cd "${INST_DIR}" || exit
 else
     echo "${LINENO} ${PROGNAME}, directory ${INST_DIR}/share/images/logos does not exist"
 fi
 # ######################################################## #
 # Summary of activities
+echo "${LINENO} ${PROGNAME}, summary of activities ..."
 date
 echo "Files added to Nagios"
 ls -l ${INST_DIR}/bin/nagios \
     ${INST_DIR}/libexec/check_ncpa.py \
     ${INST_DIR}/libexec/check_state_statusjson.sh \
     ${INST_DIR}/share/images/logos/rasp-pi-logo-icon.png \
-    ${INST_DIR}/share/images/logos/win10-logo-icon.png
+    ${INST_DIR}/share/images/logos/win10-logo-icon.png \
+    ${INST_DIR}/share/images/logos/win-server-logo-icon.png
 echo "Commands added to ${INST_DIR}/etc/objects/commands.cfg"
 grep "command_name" ${INST_DIR}/etc/objects/commands.cfg | grep -E "check_ncpa|check_statusjson_state"
 echo "Nagios web access users in ${INST_DIR}/etc/htpasswd.users, should have nagiosadmin and statusjson users."
