@@ -6,7 +6,7 @@
 #
 # program values:
 PROGNAME=$(basename "$0")
-REVISION="1.1.0"
+REVISION="1.1.1"
 # Varialbes:
 IP_SEG=192.168.0.
 CHECK_ALIVE=true
@@ -73,16 +73,22 @@ fi
 #
 # 'arp -a' is returning the following:
 # ? (192.168.0.26) at 34:f6:4b:6c:31:d0 [ether] on wlan0
-for IP_ADDR in $(arp -a | cut -d" " -f2 | sed -e 's/^.//' -e 's/.$//' | sort); do
-    echo ${IP_ADDR}
+# or
+# HostName (192.168.0.26) at 34:f6:4b:6c:31:d0 [ether] on wlan0
+while IFS="$\n" read -r ARP
+do
+    IP_ADDR=`echo ${ARP} | cut -d" " -f2 | sed -e 's/^.//' -e 's/.$//'`
+    echo "~ ${ARP} : ${IP_ADDR}"
     PG=$(ping -c 1 -a "${IP_ADDR}")
     if [ $? == 0 ]; then
-        ALIAS=""
-        NB_NAME_LINE=`nbtscan ${IP_ADDR} | tail -n 1`
-        if [[ ${NB_NAME_LINE:0:4} == "----" ]]; then
-            ALIAS=$(echo "${PG}" | head -n 1 | cut -d ' ' -f 2 | tr '.' '_')
-        else
-            ALIAS=`echo $NB_NAME_LINE | cut -f2 -d " "`
+        ALIAS=`echo ${ARP} | cut -d" " -f1`
+        if [ ${ALIAS} == "?" ]; then
+            NB_NAME_LINE=`nbtscan ${IP_ADDR} | tail -n 1`
+            if [[ ${NB_NAME_LINE:0:4} == "----" ]]; then
+                ALIAS=$(echo "${PG}" | head -n 1 | cut -d ' ' -f 2 | tr '.' '_')
+            else
+                ALIAS=`echo $NB_NAME_LINE | cut -f2 -d " "`
+            fi
         fi
         IP=$(echo "${PG}" | head -n 1 | cut -d ' ' -f 3 | tr -d '\(\)')
         if [ "X${IP_ADDR}" == "X${IP}" ]; then
@@ -105,5 +111,5 @@ for IP_ADDR in $(arp -a | cut -d" " -f2 | sed -e 's/^.//' -e 's/.$//' | sort); d
     else
         echo "IP ${IP_ADDR} not active..."
     fi
-done
-# end-of-script
+done <<<"$(arp -a)"
+## end-of-script
