@@ -81,20 +81,21 @@ do
     echo "~ ${ARP} : ${IP_ADDR}"
     PG=$(ping -c 1 -a "${IP_ADDR}")
     if [ $? == 0 ]; then
-        ALIAS=`echo ${ARP} | cut -d" " -f1`
-        if [ ${ALIAS} == "?" ]; then
+        HNAME=`echo ${ARP} | cut -d" " -f1`
+        if [ ${HNAME} == "?" ]; then
             NB_NAME_LINE=`nbtscan ${IP_ADDR} | tail -n 1`
             if [[ ${NB_NAME_LINE:0:4} == "----" ]]; then
-                ALIAS=$(echo "${PG}" | head -n 1 | cut -d ' ' -f 2 | tr '.' '_')
+                HNAME=$(echo "${PG}" | head -n 1 | cut -d ' ' -f 2 | tr '.' '_')
             else
-                ALIAS=`echo $NB_NAME_LINE | cut -f2 -d " "`
+                HNAME=`echo $NB_NAME_LINE | cut -f2 -d " "`
             fi
         fi
+        ALIAS=$(echo "${HNAME}" | tr '-' ' ')
         IP=$(echo "${PG}" | head -n 1 | cut -d ' ' -f 3 | tr -d '\(\)')
         if [ "X${IP_ADDR}" == "X${IP}" ]; then
             echo "define host {"                          | tee -a "${FILE}"
             echo "    use                   generic-host" | tee -a "${FILE}"
-            echo "    host_name             ${ALIAS}"     | tee -a "${FILE}"
+            echo "    host_name             ${HNAME}"     | tee -a "${FILE}"
             echo "    alias                 ${ALIAS}"     | tee -a "${FILE}"
             echo "    address               ${IP_ADDR}"   | tee -a "${FILE}"
             if [ "X${CHECK_ALIVE}" == "Xtrue" ]; then
