@@ -9,35 +9,48 @@
 #
 # program values:
 PROGNAME=$(basename "$0")
-REVISION="1.0.7"
+REVISION="1.0.8"
 NRDP_DIR=/usr/local/nrdp
 SRC_DIR=/usr/local/src
 # Options variables:
 NRDP_VER=2.0.2
 FORCE=false
-#
-if [ "$1" == "-h" ]; then
-  cat <<EOF
+COUNT=8
+function displayHelp {
+    cat <<EOF
 
   Usage: ${PROGNAME} [options]
 
   -h    this help text.
+  -c    number to tokens to create, default value: ${COUNT}
   -n    nagios nrdp version, default value: ${NRDP_VER}
   -f    force installation,  default value: ${FORCE}
-
+  
   Example:  ${PROGNAME} -n 1.5.2
 
 EOF
+}
+#
+if [ "$1" == "-h" ] || [ "$1" == "-?" ]; then
+  displayHelp
   exit
 fi
 #
 echo "=- Running ${PROGNAME} ${REVISION} -="
 date
 #
-while getopts ":n:f:" option
+while getopts ":c:n:f:" option
 do
   case "${option}"
   in
+    c) COUNT=${OPTARG}
+      [[ ${COUNT} == ?(-)+([0-9]) ]]
+      if [ $? == 1 ]; then
+        displayHelp
+        echo -e "\nCount: ${COUNT} must be numeric.\n"
+        exit
+      fi
+      ;;
     n) NRDP_VER=${OPTARG};;
     f) FORCE=$(echo "${OPTARG}" | tr '[:upper:]' '[:lower:]');;
     *) echo "Invalid option: ${option}  arg: ${OPTARG}"
@@ -78,9 +91,9 @@ if [ -d "${SRC_DIR}/nrdp-${NRDP_VER}" ]; then
     # generate 8 random 64 byte tokens with python secrets
     which python3.7 > /dev/null
     if [ $? == 0 ]; then
-      python3.7 << _EOF >> token.txt
+      python3 << _EOF >> token.txt
 import secrets as Secrets
-for i in range(0, 8):
+for i in range(0, ${COUNT}):
     print('    "{0}",'.format(Secrets.token_urlsafe(64)))
 _EOF
     else
