@@ -20,7 +20,9 @@ This will install:
 - check_ncpa.py and configure check command
 - check_state_statusjson.sh and configure check command
 - rasp-pi-logo-icon.png icon
+- py-logger-logo-icon.png icon
 - win10-logo-icon.png icon
+- win-server-logo-icon.png icon
 
 Installation example as follows:
 
