@@ -98,6 +98,11 @@ do
         fi
         ALIAS=$(echo "${HNAME}" | tr '-' ' ')
         IP=$(echo "${PG}" | head -n 1 | cut -d ' ' -f 3 | tr -d '\(\)')
+        TTL=$(echo "${PG}" | grep "ttl=" | cut -d" " -f6)
+        LOGO="unknown.gif"
+        if [ "X${TTL}" == "Xttl=128" ]; then
+            LOGO="win10-logo-icon.png"
+        fi
         if [ "X${IP_ADDR}" == "X${IP}" ]; then
             echo "define host {"                          | tee -a "${FILE}"
             echo "    use                   generic-host" | tee -a "${FILE}"
@@ -109,7 +114,8 @@ do
                 echo "    active_checks_enabled 1"                | tee -a "${FILE}"
                 echo "    max_check_attempts    1"                | tee -a "${FILE}"
             fi
-            echo "    register              1"   | tee -a "${FILE}"
+            echo "    icon_image            ${LOGO}"      | tee -a "${FILE}"
+            echo "    register              1"            | tee -a "${FILE}"
             echo "}"                                      | tee -a "${FILE}"
             echo "#"                                      | tee -a "${FILE}"
         else

@@ -18,14 +18,16 @@ INST_DIR=/usr/local/nagios
 # Variables:
 NAGIOS_VER=4.4.5
 PLUGIN_VER=2.2.1
+SNMP=false
 #
-if [ "$1" == "-h" ]; then
+if [ "$1" == "-h" ] || [ "$1" == "-?" ]; then
   cat <<EOF
   Usage: ${PROGNAME} [options]
 
     -h    this help text.
     -n    nagios version, default value: ${NAGIOS_VER}
     -p    plugin version, default value: ${PLUGIN_VER}
+    -s    install smtp,   default value: ${SNMP}
 
     Example:  ${PROGNAME} -n 4.4.3 -p 2.2.1
 
@@ -36,12 +38,13 @@ fi
 echo "=- Running ${PROGNAME} ${REVISION} -="
 date
 #
-while getopts ":n:p:" option
+while getopts ":n:p:s:" option
 do
     case "${option}"
     in
         n) NAGIOS_VER=${OPTARG};;
         p) PLUGIN_VER=${OPTARG};;
+        s) SNMP=$(echo "${OPTARG}" | tr '[:upper:]' '[:lower:]');;
         *) echo "Invalid option: ${option} arg: ${OPTARG}"
             exit 1
             ;;
