@@ -56,6 +56,12 @@ Also see the /usr/local/nrdp/clients folder for utilities for sending passive ev
 * send_nrdp.py
 * send_nrdp.sh
 
+Java and perl versions are available on Nagios Exchange.
+
+This installs a seperate web site for handling incoming requests that
+are then written to Nagios spool directory.  This also creates
+'secret' security tokens to be used in sending passive events.
+
 #### Installation
 
 Installation example as follows:
@@ -107,7 +113,7 @@ $cfg['authorized_tokens'] = array(
 );
 ```
 
-I replaced them with 8 random tokens, either from python 3.7's secrets or from wordpress salt creation.  I replaced all $, %, ` and !, so the token can be eaily used on a DOS or UNIX command line.
+I replaced them with a number of random tokens, either from python 3.7's secrets or from wordpress salt creation.  I replaced all $, %, ` and !, so the token can be eaily used on a DOS or UNIX command line.
 
 ##### nrdp.conf
 
